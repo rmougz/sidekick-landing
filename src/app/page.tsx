@@ -440,20 +440,22 @@ export default function Home() {
           </div>
 
           <h1 className="mx-auto mb-5 max-w-[900px] text-[42px] font-extrabold leading-[1.15] text-white max-sm:text-[26px]">
-            Make more money without uncertainty or getting stuck in another
-            spreadsheet — in 90 days.
+            The average agency we work with improves margins by 19.5% — without adding a single new client.
           </h1>
           <p className="mx-auto mb-3 max-w-[700px] text-lg leading-relaxed text-sk-text max-sm:text-sm">
-            I&apos;ve done it for $50M+ businesses and for 50+ agency
-            businesses. Here&apos;s how.
+            See how in a free 45-minute Agency Profit Audit.
           </p>
           <div className="mx-auto mb-10 max-w-[800px] rounded-[10px] bg-sk-navy-dark p-2.5">
-            <iframe
-              className="aspect-video w-full rounded-md"
-              src="https://www.youtube.com/embed/cvGMtrArGfs?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1"
-              title="Agency Profit Audit"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
+            <Script src="https://fast.wistia.com/player.js" strategy="lazyOnload" />
+            <Script src="https://fast.wistia.com/embed/hfdiorpng4.js" strategy="lazyOnload" />
+            <div
+              className="w-full rounded-md overflow-hidden"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  <style>wistia-player[media-id='hfdiorpng4']:not(:defined){background:center/contain no-repeat url('https://fast.wistia.com/embed/medias/hfdiorpng4/swatch');display:block;filter:blur(5px);padding-top:56.25%}</style>
+                  <wistia-player media-id="hfdiorpng4" aspect="1.7777777777777777"></wistia-player>
+                `,
+              }}
             />
           </div>
 
