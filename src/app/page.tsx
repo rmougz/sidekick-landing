@@ -3,6 +3,14 @@
 import Image from "next/image";
 import Script from "next/script";
 
+declare global {
+  interface Window {
+    Calendly?: {
+      initPopupWidget: (options: { url: string }) => void;
+    };
+  }
+}
+
 const caseStudies = [
   {
     title:
@@ -223,7 +231,6 @@ function CTAButton({
       href=""
       onClick={(e) => {
         e.preventDefault();
-        // @ts-expect-error Calendly is loaded via external script
         window.Calendly?.initPopupWidget({ url: "https://calendly.com/sidekick-accounting/sidekickcfodiscovery" });
       }}
       className={`${base} ${variants[variant]} ${className}`}
