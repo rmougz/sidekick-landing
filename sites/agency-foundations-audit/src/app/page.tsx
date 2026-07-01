@@ -10,7 +10,14 @@ const BOOKING_URL =
 
 // Featured client wins - traditional testimonial quotes (verbatim from
 // sidekickaccounting.co.uk/client-wins + the VSL script). First item is featured.
-const wins = [
+type Win = {
+  quote: string;
+  name: string;
+  role: string;
+  photo?: string;
+  result?: string;
+};
+const wins: Win[] = [
   {
     quote:
       "We've always got the information we need to make decisions quickly. We've saved £10k in taxes since working with Sidekick. They're not your usual accountant.",
