@@ -1,20 +1,72 @@
 @import "tailwindcss";
 
+/*
+ * Sidekick design tokens.
+ * Source of truth: the "Sidekick Website 2026" design handoff.
+ * Coral is a disciplined accent only — never a flood fill behind text.
+ */
 @theme inline {
-  --color-sk-navy: #0e2d48;
-  --color-sk-navy-dark: #091e30;
-  --color-sk-coral: #fd605b;
-  --color-sk-mint: #99ddcc;
-  --color-sk-pink: #ffcecd;
-  --color-sk-grey: #eee8e8;
-  --color-sk-text: #d4d4d4;
-  --color-sk-muted: #8a9bb5;
-  --color-sk-border: #1a3a55;
-  --font-sans: "Plus Jakarta Sans", sans-serif;
+  /* Primary ink */
+  --color-navy: #0e2d48;
+  --color-navy-deep: #071d31;
+  /* The single accent */
+  --color-coral: #fd605b;
+  --color-coral-press: #e5534f;
+  /* Supporting accents */
+  --color-mint: #99ddcc;
+  --color-pink: #ffcecd;
+  --color-grey-soft: #eee8e8;
+  /* Surfaces */
+  --color-paper: #fbfaf7;
+  --color-paper-warm: #f4f2ee;
+  /* Lines */
+  --color-border: #ece9e3;
+  --color-border-input: #d9d5cc;
+  /* Text scale */
+  --color-ink-body: #3a3a3a;
+  --color-ink-soft: #5a5a5a;
+  --color-ink-meta: #9a9a9a;
+
+  --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui,
+    sans-serif;
+
+  /* Heading tracking band: -0.025 to -0.04em */
+  --tracking-snug: -0.025em;
+  --tracking-heading: -0.03em;
+  --tracking-headline: -0.04em;
+
+  /* Radius ladder */
+  --radius-input: 12px;
+  --radius-tile: 16px; /* icon tiles / chips */
+  --radius-card-sm: 20px; /* small cards */
+  --radius-card: 24px; /* panels / cards */
+
+  /* Warm shadow family — same geometry, escalating alpha. No coloured shadows. */
+  --shadow-card: 0 14px 42px rgba(17, 17, 17, 0.05);
+  --shadow-dropdown: 0 14px 42px rgba(17, 17, 17, 0.12);
 }
 
 body {
-  background: var(--color-sk-navy);
-  color: #ffffff;
+  /* Default page background = paper; base ink = navy */
+  background: var(--color-paper);
+  color: var(--color-navy);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Numbers/money use tabular figures by convention */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
