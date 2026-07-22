@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   title: "Agency Foundations Review | Sidekick Accounting Ltd",
   description:
     "See where your agency's accounting and tax setup is costing you - surprise tax bills, generic books, no forward planning - in a single free 45-minute review.",
+  // Funnel page for ads/direct traffic only — keep the whole zone out of
+  // search results (do NOT block it in robots.txt: Google must crawl the
+  // page to see this tag).
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({

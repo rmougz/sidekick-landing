@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   title: "Agency Profit Audit | Sidekick Accounting Ltd",
   description:
     "Find where your agency's profit is leaking — without changing your accountant or overhauling your ops — in a single 45-minute audit.",
+  // Funnel page for ads/direct traffic only — keep the whole zone out of
+  // search results (do NOT block it in robots.txt: Google must crawl the
+  // page to see this tag).
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({
