@@ -2,14 +2,11 @@
 
 import Image from "next/image";
 import Script from "next/script";
+import { PopupButton } from "@typeform/embed-react";
 
-declare global {
-  interface Window {
-    Calendly?: {
-      initPopupWidget: (options: { url: string }) => void;
-    };
-  }
-}
+// Canonical form id for https://sidekickaccounting.typeform.com/profitaudit —
+// the embed loads form.typeform.com/to/<id>, which rejects the vanity alias.
+const TYPEFORM_ID = "FNnck2Hf";
 
 const caseStudies = [
   {
@@ -196,6 +193,40 @@ const testimonials = [
   },
 ];
 
+const credibility = [
+  "EY & banking background",
+  "Team of ACA-qualified accountants (CPA equivalent)",
+  "50+ agencies served",
+  "Onboarding 3 new clients a month",
+];
+
+const faqs = [
+  {
+    q: "We already have an accountant. Why would we need this?",
+    a: "Your accountant looks backwards: compliance, tax, year-end. This is the forward-looking financial layer: client-level profitability, a rolling cash forecast, capacity planning and pricing decisions. Different job. The two work side by side.",
+  },
+  {
+    q: "How is this different from a fractional CFO we've tried before?",
+    a: "Most fractional CFOs give advice and leave the work with you. We install financial infrastructure you own: the reporting structure, the forecast, the monthly management pack and the decision rhythm around them. And it's a team of qualified accountants, not one person spread across ten clients.",
+  },
+  {
+    q: "We're not planning to sell. Is this still relevant?",
+    a: "Yes. The same infrastructure that makes an agency buyer-ready is what makes it calm to run: clear margins, predictable cash, decisions made on data instead of gut feel. If you do sell one day, it's already built.",
+  },
+  {
+    q: "Who is this for?",
+    a: "Founder-led agencies and consultancies doing $1M+ in revenue. That's where the offer is built to bite: enough complexity that visibility pays for itself many times over.",
+  },
+  {
+    q: "Are you qualified to work with US agencies?",
+    a: "The team are all ACA-qualified chartered accountants, the UK equivalent of a CPA, led by a founder with an EY and banking background. Our clients span the US and the UK, and every result on this page is quoted in the currency the client earns in.",
+  },
+  {
+    q: "What actually happens on the call?",
+    a: "45 minutes. No pitch. We go through your numbers and you leave with a clear financial picture of your business and where profit is leaking. If it makes sense to go further, we'll show you what that looks like. Either way, you keep the findings.",
+  },
+];
+
 const logos = [
   { src: "/logos/1.png", alt: "Literal Humans" },
   { src: "/logos/2.png", alt: "Kurve" },
@@ -227,16 +258,13 @@ function CTAButton({
       "bg-transparent text-sk-navy border-2 border-sk-navy hover:bg-sk-navy hover:text-white",
   };
   return (
-    <a
-      href=""
-      onClick={(e) => {
-        e.preventDefault();
-        window.Calendly?.initPopupWidget({ url: "https://calendly.com/sidekick-accounting/sidekickcfodiscovery" });
-      }}
+    <PopupButton
+      id={TYPEFORM_ID}
+      transitiveSearchParams
       className={`${base} ${variants[variant]} ${className}`}
     >
       {children}
-    </a>
+    </PopupButton>
   );
 }
 
@@ -423,10 +451,6 @@ function TestimonialCard({
 export default function Home() {
   return (
     <>
-      {/* Calendly popup widget */}
-      <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
-      <Script src="https://assets.calendly.com/assets/external/widget.js" strategy="lazyOnload" />
-
       {/* Hero */}
       <section
         className="px-5 pb-20 pt-15 text-center"
@@ -446,12 +470,28 @@ export default function Home() {
             />
           </div>
 
+          <p className="mb-4 text-[13px] font-bold uppercase tracking-[3px] text-sk-coral max-sm:text-[11px]">
+            For agencies and consultants doing $1M+ in revenue
+          </p>
           <h1 className="mx-auto mb-5 max-w-[900px] text-[42px] font-extrabold leading-[1.15] text-white max-sm:text-[26px]">
-            The average agency we work with improves margins by 19.5% — without adding a single new client.
+            Get a full outsourced finance team: a fractional CFO, controller
+            and bookkeeper for one monthly fee, without hiring in-house.
           </h1>
           <p className="mx-auto mb-3 max-w-[700px] text-lg leading-relaxed text-sk-text max-sm:text-sm">
-            See how in a free 45-minute Agency Profit Audit.
+            The average agency we work with improves margins by 19.5% - without
+            adding a single new client.
           </p>
+          <ul className="mx-auto mb-8 mt-5 flex max-w-[960px] flex-wrap items-center justify-center gap-x-6 gap-y-2.5 max-sm:w-fit max-sm:flex-col max-sm:items-start">
+            {credibility.map((item) => (
+              <li
+                key={item}
+                className="flex items-center gap-2 text-[12px] font-semibold text-white/80"
+              >
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-sk-coral" />
+                {item}
+              </li>
+            ))}
+          </ul>
           <div className="mx-auto mb-10 max-w-[800px] rounded-[10px] bg-sk-navy-dark p-2.5">
             <Script src="https://fast.wistia.com/player.js" strategy="lazyOnload" />
             <Script src="https://fast.wistia.com/embed/hfdiorpng4.js" strategy="lazyOnload" />
@@ -565,6 +605,36 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FAQ */}
+      <section className="bg-sk-grey px-5 py-15">
+        <div className="mx-auto max-w-[820px]">
+          <p className="mb-3 text-center text-[13px] font-bold uppercase tracking-[2px] text-sk-coral">
+            Common questions
+          </p>
+          <h2 className="mb-10 text-center text-[32px] font-extrabold leading-[1.15] text-sk-navy max-sm:text-2xl">
+            Answered before you ask
+          </h2>
+          <div className="space-y-4">
+            {faqs.map((faq) => (
+              <details
+                key={faq.q}
+                className="group rounded-xl border border-sk-navy/10 bg-white px-6 py-5 shadow-sm"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[17px] font-bold text-sk-navy [&::-webkit-details-marker]:hidden max-sm:text-[15px]">
+                  {faq.q}
+                  <span className="text-2xl leading-none text-sk-coral transition-transform group-open:rotate-45">
+                    +
+                  </span>
+                </summary>
+                <p className="mt-4 text-[15px] leading-relaxed text-sk-navy/75">
+                  {faq.a}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Closing CTA */}
       <section
         className="px-5 py-20 text-center"
@@ -602,6 +672,12 @@ export default function Home() {
           business advice. No guarantees of specific outcomes or results are
           made. Any reference to potential improvements, performance, or return
           is illustrative only and will vary by business.
+        </p>
+        <p className="mx-auto mt-4 max-w-[800px] text-xs leading-[1.8] text-sk-muted">
+          This site is not part of the Facebook&trade; website or Meta
+          Platforms, Inc. Additionally, this site is not endorsed by
+          Facebook&trade; in any way. FACEBOOK&trade; is a trademark of Meta
+          Platforms, Inc.
         </p>
       </footer>
     </>
