@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Sellable Agency Blueprint | Sidekick Accounting</title>
+  <meta name="description" content="Most agencies are a high-paying job, not an asset. A blueprint for scaling marketing and creative agency founders to build a business that runs - and sells - without them." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  /* ====================================================================
+     BRAND KIT - Sidekick Accounting
+     Light long-form reading experience; navy dark panels; coral accent.
+     See ../../context/brand-kit.md
+  ==================================================================== */
+
+  :root {
+    --bg: #ffffff;
+    --text: #0e2d48;                      /* sk-navy */
+    --text-mid: rgba(14,45,72,0.74);
+    --text-dim: rgba(14,45,72,0.62);       /* AA-legible for content labels */
+    --border: #e6dede;
+    --bg-cream: #f7f2f2;                   /* warm off-white toward sk-grey */
+    --bg-cream-deep: #eee8e8;              /* sk-grey */
+    --black: #0e2d48;                      /* sk-navy - dark cards & CTAs */
+    --black-deep: #091e30;                 /* sk-navy-dark */
+    --accent: #fd605b;                     /* sk-coral - fills, buttons, the ONE accent */
+    --accent-text: #d8443f;                /* deeper coral for small text (AA on light) */
+    --accent-soft: rgba(253,96,91,0.07);
+    --accent-border: rgba(253,96,91,0.24);
+    --accent-glow: rgba(253,96,91,0.30);
+    --mint: #99ddcc;                       /* positive signal (scorecard ticks + score bar) */
+    --mint-deep: #2f8f76;                  /* deeper mint for text/marks on light if needed */
+    --font: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    --shadow-sm: 0 1px 2px rgba(14,45,72,0.04);
+    --shadow-md: 0 4px 14px rgba(14,45,72,0.06);
+    --shadow-lg: 0 8px 30px rgba(14,45,72,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  body { min-height: 100vh; padding-top: 56px; }
+
+  .container { max-width: 920px; margin: 0 auto; padding: 0 28px; }
+
+  /* Offset anchored targets so the fixed header never clips them */
+  [id^="section-"], #quiz, #quizResults { scroll-margin-top: 80px; }
+
+  /* Branded focus states (keyboard) */
+  :focus-visible { outline: 2px solid var(--accent-text); outline-offset: 3px; border-radius: 4px; }
+  .top-strip-cta:focus-visible, .mid-cta-btn:focus-visible, .cta-button-primary:focus-visible,
+  .quiz-results-cta:focus-visible, .quiz-answer:focus-visible {
+    outline: 2px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 4px var(--accent-glow);
+  }
+
+  /* READING PROGRESS BAR */
+  .reading-progress {
+    position: fixed; top: 0; left: 0; height: 4px;
+    background: var(--accent); z-index: 1000; width: 0%;
+    transition: width 0.2s ease;
+  }
+
+  /* STICKY HEADER - navy so the white logo and coral CTA both read */
+  .top-strip {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: var(--black-deep);
+    padding: 12px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    z-index: 999; margin-top: 4px;
+  }
+  .top-strip-logo { height: 24px; width: auto; max-width: 150px; }
+  .top-strip-cta {
+    background: var(--accent); color: #fff; padding: 10px 20px;
+    border-radius: 4px; font-size: 14px; font-weight: 700;
+    text-decoration: none; display: inline-block; cursor: pointer;
+    border: none; transition: opacity 0.2s ease, transform 0.2s ease; letter-spacing: 0;
+  }
+  .top-strip-cta:hover { opacity: 0.9; }
+
+  /* TYPOGRAPHY */
+  h1 { font-size: clamp(38px, 5.6vw, 60px); font-weight: 400; line-height: 1.12; margin: 0 0 18px 0; color: var(--text); letter-spacing: -0.03em; }
+  h1 strong { font-weight: 700; }
+  h2 { font-size: clamp(28px, 3.8vw, 42px); font-weight: 400; line-height: 1.2; margin: 0 0 20px 0; color: var(--text); letter-spacing: -0.025em; }
+  h2 strong { font-weight: 700; }
+  h3 { font-size: 22px; font-weight: 600; line-height: 1.35; margin: 0 0 12px 0; color: var(--text); letter-spacing: -0.01em; }
+  p { font-size: 17px; color: var(--text-mid); line-height: 1.65; margin: 0 0 16px 0; max-width: 760px; }
+  p.subhead { font-size: 20px; color: var(--text-mid); line-height: 1.5; font-weight: 400; margin: 0 0 24px 0; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; transition: opacity 0.2s ease; }
+  a:hover { opacity: 0.8; }
+  strong { font-weight: 600; color: var(--text); }
+  /* On dark panels, bold text must inherit the panel's light colour (not navy-on-navy) */
+  .cta-section strong, .mid-cta strong, .ops-card.featured strong,
+  .identity-shift-card.target strong, .quiz-results strong, .node-founder strong { color: inherit; }
+  .accent { color: var(--accent-text); }
+
+  /* EYEBROW & HERO META */
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin: 0 0 16px 0; }
+  .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .meta-row { display: flex; align-items: center; gap: 24px; font-size: 14px; color: var(--text-dim); margin: 24px 0 48px 0; flex-wrap: wrap; }
+  .meta-row span { position: relative; }
+
+  /* HERO */
+  .hero { padding: 44px 0 56px 0; }
+  .hero-content { max-width: 720px; }
+
+  /* SECTION DIVIDERS */
+  section.divider { padding: 64px 0; border-top: 1px solid var(--border); }
+  section.divider:first-of-type { border-top: none; }
+  .section-label { display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-text); margin: 0 0 14px 0; }
+
+  /* OUTLINE / TOC */
+  .outline-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 32px 0 8px 0; }
+  .outline-item { padding: 12px 16px; background: var(--bg-cream); border: 1px solid var(--border); border-radius: 4px; font-size: 14px; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease; }
+  .outline-item:hover { background: var(--bg-cream-deep); border-color: var(--accent); }
+  .outline-item a { color: var(--text); border: none; display: block; }
+  .outline-item a:hover { opacity: 1; color: var(--accent); }
+  .outline-item.quiz-link { background: var(--accent-soft); border-color: var(--accent-border); }
+  .outline-item.quiz-link a { color: var(--accent-text); font-weight: 700; }
+
+  /* PATTERN LIST */
+  .pattern-list { list-style: none; margin: 32px 0; }
+  .pattern-item { display: flex; gap: 16px; margin: 20px 0; align-items: flex-start; }
+  .pattern-num { flex-shrink: 0; font-size: 20px; font-weight: 700; color: var(--accent); width: 28px; text-align: center; line-height: 1.4; }
+  .pattern-item p { margin: 0; flex: 1; }
+
+  /* PULL QUOTE */
+  .pull-quote { padding: 28px 28px 28px 24px; background: var(--bg-cream); border-left: 4px solid var(--accent); font-size: 19px; line-height: 1.55; color: var(--text); margin: 40px 0; font-weight: 500; position: relative; max-width: none; }
+  .pull-quote::before { content: '"'; position: absolute; top: 12px; left: 18px; font-size: 34px; color: var(--accent); opacity: 0.35; line-height: 0.5; }
+  .pull-quote p { font-size: inherit; color: inherit; margin: 0; max-width: none; }
+
+  /* LOGO GRID / AUTHORITY */
+  .logo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px 24px; align-items: center; justify-items: center; margin: 40px 0 0 0; padding: 36px 32px; background: var(--bg-cream); border-radius: 4px; }
+  .logo-cell { height: 46px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .logo-cell img { max-width: 100%; max-height: 100%; object-fit: contain; opacity: 0.5; transition: opacity 0.2s ease; filter: brightness(0) saturate(100%) invert(14%) sepia(30%) saturate(1000%) hue-rotate(175deg) brightness(95%); }
+  .logo-cell img:hover { opacity: 0.9; }
+  .logo-cell.logo-missing { font-size: 13px; color: var(--text-dim); text-align: center; }
+
+  /* ORG CHART */
+  .org-chart { display: flex; flex-direction: column; gap: 24px; margin: 40px 0; }
+  .layer { position: relative; }
+  .layer-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin: 0 0 12px 0; }
+  .node { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+  .node-item { padding: 16px; background: var(--bg-cream); border: 1px solid var(--border); border-radius: 4px; }
+  .node-founder { background: var(--black); color: #fff; border: 1px solid var(--black); }
+  .node-founder .node-title { color: #fff; }
+  .node-founder .node-role { color: rgba(255,255,255,0.7); }
+  .node-key { border: 2px solid var(--accent); background: var(--accent-soft); }
+  .node-title { font-size: 14px; font-weight: 600; color: var(--text); margin: 0 0 4px 0; }
+  .node-role { font-size: 13px; color: var(--text-dim); }
+
+  .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 32px 0; }
+  .comparison-col h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); margin: 0 0 14px 0; }
+  .comparison-col.target h4 { color: var(--accent-text); }
+  .comparison-col .org-chart { margin: 0; }
+  @media (max-width: 768px) { .comparison-grid { grid-template-columns: 1fr; } }
+
+  /* LAYER CARD */
+  .layer-card { padding: 28px; background: var(--bg-cream); border: 1px solid var(--border); border-radius: 4px; margin: 20px 0; }
+  .layer-card .layer-num { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-text); margin: 0 0 6px 0; }
+  .layer-card h3 { margin: 0 0 16px 0; }
+  .owns-row { display: flex; gap: 12px; margin: 14px 0; align-items: flex-start; }
+  .owns-label { font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; width: 92px; padding-top: 1px; }
+  .owns-content { font-size: 14px; color: var(--text-mid); flex: 1; margin: 0; }
+
+  /* OPS COMPARISON */
+  .ops-comparison { margin: 40px 0; }
+  .ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .ops-grid { grid-template-columns: 1fr; } }
+  .ops-card { padding: 28px; background: var(--bg-cream); border: 1px solid var(--border); border-radius: 4px; position: relative; overflow: hidden; }
+  .ops-card.featured { background: var(--black); color: #fff; border: 1px solid var(--black); }
+  .ops-card.featured::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); }
+  .ops-card.featured h3 { color: #fff; }
+  .ops-card.featured p { color: rgba(255,255,255,0.85); }
+  .ops-card h3 { margin: 0 0 12px 0; font-size: 18px; }
+  .ops-card p { margin: 0; font-size: 15px; max-width: none; }
+
+  /* IDENTITY SHIFT */
+  .identity-shift-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 40px 0; }
+  @media (max-width: 768px) { .identity-shift-grid { grid-template-columns: 1fr; } }
+  .identity-shift-card { padding: 28px; background: var(--bg-cream); border: 1px solid var(--border); border-radius: 4px; position: relative; overflow: hidden; }
+  .identity-shift-card.target { background: var(--black); color: #fff; border: 1px solid var(--black); }
+  .identity-shift-card.target::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); }
+  .identity-shift-card.target h3 { color: #fff; }
+  .identity-shift-card.target p { color: rgba(255,255,255,0.85); }
+  .identity-shift-card h3 { margin: 0 0 12px 0; }
+  .identity-shift-card p { margin: 0; font-size: 15px; max-width: none; }
+
+  /* MID-PAGE CTA */
+  .mid-cta { display: flex; align-items: center; gap: 0; background: var(--black); color: #fff; padding: 32px; border-radius: 4px; margin: 48px 0; position: relative; overflow: hidden; }
+  .mid-cta::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); }
+  .mid-cta-content { flex: 1; padding: 0 28px; }
+  .mid-cta-content h3 { color: #fff; margin: 0 0 8px 0; }
+  .mid-cta-content p { color: rgba(255,255,255,0.85); margin: 0; font-size: 15px; max-width: none; }
+  .mid-cta-btn { flex-shrink: 0; background: var(--accent); color: #fff; padding: 14px 28px; border: none; border-radius: 4px; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s ease; text-decoration: none; display: inline-block; }
+  .mid-cta-btn:hover { opacity: 0.9; }
+
+  /* QUIZ */
+  .quiz-section { padding: 64px 0; border-top: 1px solid var(--border); }
+  .quiz-container { max-width: 620px; margin: 0 auto; }
+  .quiz-intro { text-align: center; margin: 0 auto 8px; }
+  .quiz-question { padding: 28px; background: #fff; border: 1px solid var(--border); border-radius: 4px; margin: 24px 0; box-shadow: var(--shadow-md); min-height: 244px; opacity: 0; transform: translateY(32px); animation: fadeInUp 0.4s ease forwards; }
+  @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+  .quiz-progress { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-text); margin: 0 0 10px 0; }
+  .quiz-question h3 { margin: 0 0 20px 0; }
+  .quiz-answers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quiz-answer { padding: 16px; background: var(--bg-cream); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; transition: border-color 0.2s ease, background 0.2s ease, transform 0.1s ease; text-align: left; font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.4; font-family: inherit; }
+  .quiz-answer:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .quiz-answer.selected { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+  .quiz-back { display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; font-size: 13px; font-weight: 500; color: var(--text-dim); border: none; background: none; cursor: pointer; font-family: inherit; padding: 4px 0; }
+  .quiz-back:hover { color: var(--accent-text); }
+  .quiz-results { display: none; padding: 32px; background: var(--black); color: #fff; border-radius: 4px; border-top: 3px solid var(--accent); margin: 24px 0; opacity: 0; }
+  .quiz-results.show { display: block; animation: fadeInUp 0.4s ease forwards; }
+  .quiz-results h3 { color: #fff; margin: 0 0 16px 0; font-size: 24px; }
+  .dependency-score { margin: 20px 0; }
+  .score-bar { height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; margin: 8px 0; }
+  .score-fill { height: 100%; background: var(--mint); width: 0%; border-radius: 4px; transition: width 0.9s cubic-bezier(0.22,1,0.36,1) 0.15s; }
+  .score-label { font-size: 14px; color: rgba(255,255,255,0.8); margin: 8px 0 0 0; }
+  .quiz-results-copy { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,0.88); margin: 20px 0 0; }
+  .quiz-results-copy p { color: inherit; max-width: none; margin: 0; }
+  .gap-list { list-style: none; margin: 20px 0 0; display: grid; gap: 10px; }
+  .gap-item { display: flex; align-items: center; gap: 11px; font-size: 15px; color: rgba(255,255,255,0.9); }
+  .gap-mark { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .gap-item.good .gap-mark { background: rgba(153,221,204,0.18); color: var(--mint); }
+  .gap-item.gap .gap-mark { background: rgba(253,96,91,0.2); color: var(--accent); }
+  .quiz-results-cta { background: var(--accent); color: #fff; padding: 14px 28px; border: none; border-radius: 4px; font-size: 16px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 24px; transition: opacity 0.2s ease; }
+  .quiz-results-cta:hover { opacity: 0.9; }
+
+  /* FINAL CTA */
+  .cta-section { padding: 52px 32px; background: var(--black); color: #fff; border-radius: 4px; border-top: 3px solid var(--accent); text-align: center; margin: 64px 0; }
+  .cta-section h2 { color: #fff; margin: 0 auto 14px; max-width: 640px; }
+  .cta-section p { color: rgba(255,255,255,0.82); margin: 0 auto 28px; max-width: 560px; }
+  .cta-button-primary { background: var(--accent); color: #fff; padding: 16px 36px; border: none; border-radius: 4px; font-size: 17px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; transition: opacity 0.2s ease; }
+  .cta-button-primary:hover { opacity: 0.9; }
+  .cta-trust { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 16px; }
+
+  /* FOOTER */
+  .site-footer { background: var(--black-deep); padding: 32px 28px; }
+  .site-footer p { font-size: 12px; line-height: 1.8; color: rgba(255,255,255,0.62); max-width: 820px; margin: 0 auto; text-align: center; }
+
+  /* FADE-UP ANIMATIONS */
+  .fade-up { opacity: 0; transform: translateY(32px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .pull-quote.fade-up { transform: translateX(-24px) translateY(32px); }
+  .pull-quote.fade-up.visible { transform: translateX(0) translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .top-strip { padding: 10px 20px; }
+    .top-strip-logo { height: 20px; }
+    .meta-row { flex-direction: column; align-items: flex-start; gap: 8px; margin: 20px 0 40px 0; }
+    .mid-cta { flex-direction: column; text-align: center; padding: 24px; gap: 18px; }
+    .mid-cta-content { padding: 0; }
+    .mid-cta-btn { width: 100%; }
+    .logo-grid { grid-template-columns: repeat(2, 1fr); gap: 22px 18px; padding: 24px 20px; }
+    .quiz-answers { grid-template-columns: 1fr; }
+    .quiz-question { min-height: 0; }
+    p.subhead { font-size: 18px; }
+  }
+</style>
+</head>
+
+<body>
+
+  <div class="reading-progress"></div>
+
+  <!-- Sticky header -->
+  <div class="top-strip">
+    <img src="logo.png" alt="Sidekick Accounting" class="top-strip-logo" />
+    <a href="https://calendly.com/sidekick-accounting/sidekickcfodiscovery?utm_source=lead-magnet&utm_medium=sellable-agency-blueprint&utm_content=header-sticky" class="top-strip-cta">Book your Audit</a>
+  </div>
+
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          Sidekick &middot; 100+ agencies, real exits
+        </div>
+
+        <h1>Most agencies aren't a business. They're a <strong><span style="white-space: nowrap;">high-paying</span> job you can't sell.</strong></h1>
+
+        <p class="subhead">
+          If you run a marketing or creative agency doing &pound;50k to &pound;500k+ a month, this is how you turn it into an asset-grade business: one that produces predictable profit, runs without you, and could sell for a premium even if you never do.
+        </p>
+
+        <div class="meta-row">
+          <span>7 minute read</span>
+          <span>A 6-part blueprint</span>
+          <span>By Rayhaan, Sidekick Accounting</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOC -->
+    <div class="outline-grid">
+      <div class="outline-item"><a href="#section-01">01 &middot; What it's really worth</a></div>
+      <div class="outline-item"><a href="#section-02">02 &middot; The three value killers</a></div>
+      <div class="outline-item"><a href="#section-03">03 &middot; The growth trap</a></div>
+      <div class="outline-item"><a href="#section-04">04 &middot; Getting out of the way</a></div>
+      <div class="outline-item"><a href="#section-05">05 &middot; The financial layer</a></div>
+      <div class="outline-item"><a href="#section-06">06 &middot; Operator to owner</a></div>
+      <div class="outline-item quiz-link"><a href="#quiz">Score your agency &rarr;</a></div>
+    </div>
+
+    <!-- AUTHORITY / LOGO WALL -->
+    <section class="divider fade-up">
+      <p class="subhead" style="text-align: center; margin: 0 auto; max-width: 700px;">
+        For six years we've built the financial layer underneath scaling agencies, and taken two of them all the way to a clean exit. Across 50-plus P&amp;Ls, the agencies that became genuinely valuable all looked the same on the inside.
+      </p>
+
+      <div class="logo-grid">
+        <div class="logo-cell"><img src="logos/1.png" alt="Literal Humans" /></div>
+        <div class="logo-cell"><img src="logos/7.png" alt="Kurogo" /></div>
+        <div class="logo-cell"><img src="logos/2.png" alt="Kurve" /></div>
+        <div class="logo-cell"><img src="logos/10.png" alt="Authority Agency" /></div>
+        <div class="logo-cell"><img src="logos/3.png" alt="be Broadcast" /></div>
+        <div class="logo-cell"><img src="logos/5.png" alt="Breakout Media" /></div>
+        <div class="logo-cell"><img src="logos/6.png" alt="Influence Engine" /></div>
+        <div class="logo-cell"><img src="logos/9.png" alt="Lock & Quay Collective" /></div>
+      </div>
+    </section>
+
+    <!-- SECTION 01 - THE GOAL -->
+    <section class="divider fade-up" id="section-01">
+      <span class="section-label">Section 01</span>
+      <h2>There's the number in your head. Then there's <strong>what a buyer would actually pay.</strong></h2>
+
+      <p>
+        I've sat with founders billing &pound;2m a year who assumed they'd built something they could one day sell. Then we run the numbers a buyer would run, and the gap is brutal. Not because the work is bad, the work is usually excellent. It's because the "business" is really just them, working very hard, with a logo on top.
+      </p>
+
+      <p>
+        A buyer doesn't pay for last year's revenue. They pay for next year's profit, the profit they're confident will still be there once you, the founder, have gone. If that profit lives in your head, your relationships, and your inbox, there's nothing for them to buy. You haven't built an asset. You've built a job with a good salary and no exit.
+      </p>
+
+      <div class="pull-quote fade-up">
+        <p>An asset-grade agency throws off predictable profit a stranger could own without you in the chair. That is also, not by coincidence, the version that finally gives you your life back.</p>
+      </div>
+
+      <p>
+        Whether or not you ever sell, that is the bar worth building to. So let's look at what quietly pulls an agency away from it.
+      </p>
+    </section>
+
+    <!-- SECTION 02 - THE STRUCTURE -->
+    <section class="divider fade-up" id="section-02">
+      <span class="section-label">Section 02</span>
+      <h2>Three faults that quietly <strong>cap what your agency is worth.</strong></h2>
+
+      <p>
+        When a deal falls apart, or comes in at a humiliating multiple, it's rarely a surprise to us. It traces back to one of three structural faults, and most agencies have all three. The first one you can see in the org chart.
+      </p>
+
+      <div class="org-chart fade-up">
+        <div class="layer">
+          <div class="layer-label">How most agencies actually run</div>
+          <div class="node">
+            <div class="node-item node-founder">
+              <div class="node-title">Founder</div>
+              <div class="node-role">Sales, key clients, final sign-off, the quality bar</div>
+            </div>
+            <div class="node-item">
+              <div class="node-title">Account team</div>
+              <div class="node-role">Waits for your input</div>
+            </div>
+            <div class="node-item">
+              <div class="node-title">Delivery</div>
+              <div class="node-role">Escalates to you</div>
+            </div>
+            <div class="node-item">
+              <div class="node-title">Finance</div>
+              <div class="node-role">A bookkeeper, plus your gut</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        <strong>Fault one is owner-dependence.</strong> Sales, the biggest relationships, the final quality call, they all still run through you. <strong>Fault two is invisible margins.</strong> You know the bank balance, but not your true net margin, and not which clients actually make money once you count the time they quietly eat. <strong>Fault three is fragile revenue.</strong> Lumpy project work that resets to zero every quarter, or a single client who'd take a third of the agency with them if they walked.
+      </p>
+
+      <div class="pull-quote fade-up">
+        <p>Revenue hides all three. You can be growing fast and becoming less valuable at the same time, and never feel it until you try to leave.</p>
+      </div>
+    </section>
+
+    <!-- SECTION 03 - THE MISDIAGNOSIS -->
+    <section class="divider fade-up" id="section-03">
+      <span class="section-label">Section 03</span>
+      <h2>The trap: chasing revenue when buyers pay for <strong>de-risked profit.</strong></h2>
+
+      <p>
+        Almost every founder I meet has the same instinct: the route to a bigger, more valuable agency is more revenue. So they chase the next hire, the next client, the next service line. And they do get bigger. They just don't get more valuable.
+      </p>
+
+      <p>
+        Picture two agencies on the same &pound;3m of revenue. The first is the founder running flat out: project work, messy margins, books a year behind. The second runs without its founder, on recurring revenue, with clean numbers and a net margin everyone in the room can name. The first might fetch two to three times profit, if it sells at all. The second can command far more, on a bigger profit number to begin with. Same revenue. Wildly different outcomes. The difference isn't growth. It's risk.
+      </p>
+
+      <div class="pull-quote fade-up">
+        <p>More revenue on the same shaky foundations doesn't build an asset. It just builds a bigger job.</p>
+      </div>
+    </section>
+
+    <!-- MID-CTA #1 -->
+    <div class="mid-cta fade-up">
+      <div class="mid-cta-content">
+        <h3>Want to see your real number?</h3>
+        <p>The Agency Profit Audit shows you exactly where your margin, and your valuation, is leaking. 45 minutes, no pitch.</p>
+      </div>
+      <a href="https://calendly.com/sidekick-accounting/sidekickcfodiscovery?utm_source=lead-magnet&utm_medium=sellable-agency-blueprint&utm_content=mid-1" class="mid-cta-btn">Book your Profit Audit</a>
+    </div>
+
+    <!-- SECTION 04 - BEHAVIOUR SHIFT -->
+    <section class="divider fade-up" id="section-04">
+      <span class="section-label">Section 04</span>
+      <h2>Getting yourself <strong>out of the critical path.</strong></h2>
+
+      <p>
+        Building an asset-grade agency is mostly the work of making yourself progressively less necessary, on purpose. To a lot of founders that sounds like a threat. In practice it's the only thing that ever hands them back their time and their valuation at once.
+      </p>
+
+      <div class="comparison-grid fade-up">
+        <div class="comparison-col">
+          <h4>Founder-run, today</h4>
+          <div class="org-chart">
+            <div class="layer">
+              <div class="node" style="grid-template-columns: 1fr;">
+                <div class="node-item node-founder">
+                  <div class="node-title">Founder</div>
+                  <div class="node-role">In sales, delivery, pricing, cash and hiring</div>
+                </div>
+                <div class="node-item">
+                  <div class="node-title">The team</div>
+                  <div class="node-role">Capable, but waiting on you</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="comparison-col target">
+          <h4>Asset-grade, the target</h4>
+          <div class="org-chart">
+            <div class="layer">
+              <div class="node" style="grid-template-columns: 1fr;">
+                <div class="node-item">
+                  <div class="node-title">Founder</div>
+                  <div class="node-role">On the business: strategy and direction</div>
+                </div>
+                <div class="node-item node-key">
+                  <div class="node-title">Financial layer + ops</div>
+                  <div class="node-role">Owns the numbers and the day-to-day</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-card fade-up">
+        <h3>What changes when the financial layer goes in</h3>
+        <div class="owns-row">
+          <div class="owns-label">You stop being</div>
+          <div class="owns-content">the bottleneck for every pricing, hiring and cash decision, and the only person who knows whether a month was actually good.</div>
+        </div>
+        <div class="owns-row">
+          <div class="owns-label">It gains</div>
+          <div class="owns-content">a forward-looking finance function: monthly P&amp;L reviews, client-level and pod-level margins, hiring tied to capacity and forecast rather than panic, running whether you're there or not.</div>
+        </div>
+      </div>
+
+      <p>
+        The mechanics are unglamorous, and that's the point. A monthly P&amp;L you actually read. Profitability tracked per client and per pod. Hiring tied to a capacity plan instead of a stressful week. None of it is heroic. All of it is what a buyer, and a calmer version of you, needs in order to trust the numbers.
+      </p>
+    </section>
+
+    <!-- SECTION 05 - THE LEVERAGE LAYER -->
+    <section class="divider fade-up" id="section-05">
+      <span class="section-label">Section 05</span>
+      <h2>The financial layer that lifts profit now and <strong>proves value later.</strong></h2>
+
+      <p>
+        This is the part most agencies are missing, and it's the part we build. We think about agency finance in three layers. Most agencies only ever build the first one, and wonder why growth doesn't feel like progress.
+      </p>
+
+      <div class="layer-card fade-up">
+        <div class="layer-num">Layer 1</div>
+        <h3>Clean books, the foundation</h3>
+        <div class="owns-row">
+          <div class="owns-label">Gives you</div>
+          <div class="owns-content">accurate, up-to-date numbers you can actually trust to make a decision.</div>
+        </div>
+        <div class="owns-row">
+          <div class="owns-label">A buyer sees</div>
+          <div class="owns-content">financials that survive due diligence instead of falling apart under it.</div>
+        </div>
+      </div>
+
+      <div class="layer-card fade-up">
+        <div class="layer-num">Layer 2</div>
+        <h3>Forward-looking finance, the steering</h3>
+        <div class="owns-row">
+          <div class="owns-label">Gives you</div>
+          <div class="owns-content">cash forecasting, client-level profitability and capacity-based hiring. Decisions made on data, not gut.</div>
+        </div>
+        <div class="owns-row">
+          <div class="owns-label">A buyer sees</div>
+          <div class="owns-content">a business that's predictable rather than lucky, which is exactly what they pay up for.</div>
+        </div>
+      </div>
+
+      <div class="layer-card fade-up">
+        <div class="layer-num">Layer 3</div>
+        <h3>The strategic and exit layer, the leverage</h3>
+        <div class="owns-row">
+          <div class="owns-label">Gives you</div>
+          <div class="owns-content">pricing, margin and structure tuned to grow both profit and enterprise value at the same time.</div>
+        </div>
+        <div class="owns-row">
+          <div class="owns-label">A buyer sees</div>
+          <div class="owns-content">an asset-grade agency they can own without you, and a number they're happy to pay a premium for.</div>
+        </div>
+      </div>
+
+      <div class="ops-comparison fade-up">
+        <div class="ops-grid">
+          <div class="ops-card">
+            <h3>Most agencies</h3>
+            <p>Backward-looking bookkeeping. Numbers that are months old. Margin a mystery until the year-end accounts land, by which point the year is gone.</p>
+          </div>
+          <div class="ops-card featured">
+            <h3>Asset-grade</h3>
+            <p>Real-time, client-level, forward-looking financials. You know your true margin this week, not next year, and you can act while it still matters.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        Here's why now. None of this used to be within reach of an agency under a few million in revenue. It meant a full-time finance hire you couldn't justify. That's the part that changed. The right systems plus a fractional CFO layer now put the same financial infrastructure the big players run within reach of a &pound;50k-a-month agency.
+      </p>
+    </section>
+
+    <!-- MID-CTA #2 -->
+    <div class="mid-cta fade-up">
+      <div class="mid-cta-content">
+        <h3>Which layers have you actually built?</h3>
+        <p>In a 45-minute Profit Audit we'll map the three layers against your business and show you which gaps are costing you profit and value right now.</p>
+      </div>
+      <a href="https://calendly.com/sidekick-accounting/sidekickcfodiscovery?utm_source=lead-magnet&utm_medium=sellable-agency-blueprint&utm_content=mid-2" class="mid-cta-btn">Book your Profit Audit</a>
+    </div>
+
+    <!-- SECTION 06 - THE IDENTITY SHIFT -->
+    <section class="divider fade-up" id="section-06">
+      <span class="section-label">Section 06</span>
+      <h2>The real shift: from highest-paid employee to <strong>owner of an asset.</strong></h2>
+
+      <p>
+        Every founder I've watched build a genuinely valuable agency went through the same change, and it's more identity than process. They stopped measuring themselves by how indispensable they were, and started measuring by how well the business ran without them.
+      </p>
+
+      <div class="identity-shift-grid fade-up">
+        <div class="identity-shift-card">
+          <h3>The operator</h3>
+          <p>Value lives in you. Growth means more of your time and energy. Time off is a risk the business can't absorb. What you've built is a job you can't quit.</p>
+        </div>
+        <div class="identity-shift-card target">
+          <h3>The owner</h3>
+          <p>Value lives in the business. Growth means better systems and margins. Time off is a test the business passes. What you've built is an asset you choose to keep, or sell.</p>
+        </div>
+      </div>
+
+      <div class="pull-quote fade-up">
+        <p>Build it like you'll sell it, even if you never do. The discipline that makes an agency sellable is the same discipline that makes its founder free.</p>
+      </div>
+
+      <p>
+        You don't have to want an exit for any of this to be worth it. An asset-grade agency pays you better, stresses you less, and hands you the one thing a job never can: the choice. That's the whole game.
+      </p>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="quiz-section fade-up" id="quiz">
+      <div class="quiz-container">
+        <h2 style="text-align: center; margin-bottom: 12px;">How close is your agency to <strong>asset-grade?</strong></h2>
+        <p class="subhead quiz-intro">Five questions, about two minutes. No email required, you'll see your result straight away.</p>
+
+        <!-- Q1: size band (not scored) -->
+        <div class="quiz-question" style="animation-delay: 0s;">
+          <div class="quiz-progress">Question 1 of 5</div>
+          <h3>What's your agency's monthly revenue?</h3>
+          <div class="quiz-answers">
+            <button class="quiz-answer" data-question="1" data-answer="size-1">Under &pound;40k</button>
+            <button class="quiz-answer" data-question="1" data-answer="size-2">&pound;40k &ndash; &pound;100k</button>
+            <button class="quiz-answer" data-question="1" data-answer="size-3">&pound;100k &ndash; &pound;250k</button>
+            <button class="quiz-answer" data-question="1" data-answer="size-4">&pound;250k+</button>
+          </div>
+        </div>
+
+        <!-- Q2: owner-dependence -->
+        <div class="quiz-question" style="display: none;">
+          <div class="quiz-progress">Question 2 of 5</div>
+          <h3>How much of delivery, sales and key client relationships still runs through you?</h3>
+          <div class="quiz-answers">
+            <button class="quiz-answer" data-question="2" data-answer="0">Pull me out for a month and it stalls</button>
+            <button class="quiz-answer" data-question="2" data-answer="1">I'm in the critical path most weeks</button>
+            <button class="quiz-answer" data-question="2" data-answer="1">Team runs delivery; I hold sales &amp; key clients</button>
+            <button class="quiz-answer" data-question="2" data-answer="2">It runs without me day to day</button>
+          </div>
+          <button class="quiz-back" type="button">&larr; Back</button>
+        </div>
+
+        <!-- Q3: margin visibility -->
+        <div class="quiz-question" style="display: none;">
+          <div class="quiz-progress">Question 3 of 5</div>
+          <h3>Do you know your true net margin and which clients are actually profitable, right now?</h3>
+          <div class="quiz-answers">
+            <button class="quiz-answer" data-question="3" data-answer="0">Honestly no, I find out at year-end</button>
+            <button class="quiz-answer" data-question="3" data-answer="1">Roughly, after the fact each month</button>
+            <button class="quiz-answer" data-question="3" data-answer="1">Yes at company level, not per client</button>
+            <button class="quiz-answer" data-question="3" data-answer="2">Yes, live, down to each client</button>
+          </div>
+          <button class="quiz-back" type="button">&larr; Back</button>
+        </div>
+
+        <!-- Q4: revenue quality -->
+        <div class="quiz-question" style="display: none;">
+          <div class="quiz-progress">Question 4 of 5</div>
+          <h3>What does your revenue actually look like?</h3>
+          <div class="quiz-answers">
+            <button class="quiz-answer" data-question="4" data-answer="0">Mostly one-off projects, lumpy</button>
+            <button class="quiz-answer" data-question="4" data-answer="1">Project-led, a few retainers</button>
+            <button class="quiz-answer" data-question="4" data-answer="1">Mostly recurring, but one client is 30%+</button>
+            <button class="quiz-answer" data-question="4" data-answer="2">Recurring and well spread across clients</button>
+          </div>
+          <button class="quiz-back" type="button">&larr; Back</button>
+        </div>
+
+        <!-- Q5: diligence-readiness -->
+        <div class="quiz-question" style="display: none;">
+          <div class="quiz-progress">Question 5 of 5</div>
+          <h3>If a buyer wanted three years of clean, normalised accounts tomorrow, could you hand them over?</h3>
+          <div class="quiz-answers">
+            <button class="quiz-answer" data-question="5" data-answer="0">No, it'd need a serious clean-up</button>
+            <button class="quiz-answer" data-question="5" data-answer="1">Eventually, with a lot of work</button>
+            <button class="quiz-answer" data-question="5" data-answer="1">Mostly, with some gaps</button>
+            <button class="quiz-answer" data-question="5" data-answer="2">Yes, today, with confidence</button>
+          </div>
+          <button class="quiz-back" type="button">&larr; Back</button>
+        </div>
+
+        <!-- Results -->
+        <div class="quiz-results" id="quizResults" aria-live="polite">
+          <h3 id="resultsTitle">Your result</h3>
+          <div class="dependency-score">
+            <div class="score-label">Exit-readiness</div>
+            <div class="score-bar" id="scoreBar" role="progressbar" aria-label="Exit-readiness score out of 8" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0"><div class="score-fill" id="scoreFill" style="width: 0%;"></div></div>
+            <div class="score-label" id="scoreText"></div>
+          </div>
+          <div class="quiz-results-copy" id="resultsText"></div>
+          <a href="https://calendly.com/sidekick-accounting/sidekickcfodiscovery?utm_source=lead-magnet&utm_medium=sellable-agency-blueprint&utm_content=quiz-result" class="quiz-results-cta">Book your Agency Profit Audit</a>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- end container -->
+
+  <!-- FINAL CTA -->
+  <div style="background: var(--bg);">
+    <div class="container">
+      <section class="cta-section fade-up">
+        <h2>Build the agency you could <strong>sell tomorrow</strong>, and love today.</h2>
+        <p>
+          The Agency Profit Audit is a free 45-minute session. No pitch. You'll leave with a clear read on your margins, your biggest profit leaks, and how close your agency really is to asset-grade.
+        </p>
+        <a href="https://calendly.com/sidekick-accounting/sidekickcfodiscovery?utm_source=lead-magnet&utm_medium=sellable-agency-blueprint&utm_content=final" class="cta-button-primary">Book your Agency Profit Audit</a>
+        <p class="cta-trust">Trusted by 100+ scaling agencies. No card, no commitment.</p>
+      </section>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>
+      Sidekick Accounting Ltd. This page is for informational purposes only and does not constitute regulated financial, legal, or business advice. All frameworks and diagnostic tools, including the Agency Profit Audit and the Sellable Agency Blueprint, are the intellectual property of Sidekick Accounting Ltd. No specific outcome or valuation is guaranteed; any reference to performance, value, or returns is illustrative only and will vary by business.
+    </p>
+  </footer>
+
+<script>
+  // READING PROGRESS BAR
+  const progressBar = document.querySelector('.reading-progress');
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+  });
+
+  // SCROLL-TRIGGERED FADE-UP
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // QUIZ
+  const answers = {};
+  const dims = [
+    { q: '2', label: 'Owner-independence' },
+    { q: '3', label: 'Margin visibility' },
+    { q: '4', label: 'Revenue quality' },
+    { q: '5', label: 'Diligence-readiness' }
+  ];
+
+  document.querySelectorAll('.quiz-answer').forEach(button => {
+    button.setAttribute('aria-pressed', 'false');
+    button.addEventListener('click', () => {
+      const question = button.getAttribute('data-question');
+      const answer = button.getAttribute('data-answer');
+      document.querySelectorAll('[data-question="' + question + '"]').forEach(b => {
+        b.classList.remove('selected');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      button.classList.add('selected');
+      button.setAttribute('aria-pressed', 'true');
+      answers[question] = answer;
+
+      const currentQ = button.closest('.quiz-question');
+      const nextQ = currentQ.nextElementSibling;
+      // Brief pause so the selection is visibly confirmed before advancing
+      setTimeout(() => {
+        if (nextQ && nextQ.classList.contains('quiz-question')) {
+          currentQ.style.display = 'none';
+          nextQ.style.display = 'block';
+        } else {
+          currentQ.style.display = 'none';
+          showResults();
+        }
+      }, 220);
+    });
+  });
+
+  // Back links: return to the previous question (answers are preserved)
+  document.querySelectorAll('.quiz-back').forEach(back => {
+    back.addEventListener('click', () => {
+      const currentQ = back.closest('.quiz-question');
+      const prevQ = currentQ.previousElementSibling;
+      if (prevQ && prevQ.classList.contains('quiz-question')) {
+        currentQ.style.display = 'none';
+        prevQ.style.display = 'block';
+      }
+    });
+  });
+
+  function showResults() {
+    const resultsDiv = document.getElementById('quizResults');
+    let total = 0;
+    dims.forEach(d => { total += parseInt(answers[d.q] || '0', 10); });
+    const pct = Math.round((total / 8) * 100);
+
+    let archetype, copy;
+    if (total <= 2) {
+      archetype = 'a Self-Employed Job';
+      copy = "Right now, the business is you. That's where almost every founder starts, but it means most of the value would walk out the door the day you did. The fastest lever here isn't more revenue, it's the financial visibility and owner-independence that turn your effort into equity. A Profit Audit is where we'd map the first moves.";
+    } else if (total <= 4) {
+      archetype = 'Operator-Run';
+      copy = "You've built something real, but it still runs on your daily input, so a buyer would discount it heavily and you can't fully switch off. The gaps below are where the value is leaking. Pinpointing and closing them is exactly what the Agency Profit Audit is built for.";
+    } else if (total <= 6) {
+      archetype = 'a Managed Agency';
+      copy = "You're most of the way there. The business largely runs without you day to day. What stands between you and asset-grade is usually the financial layer: provable margins, clean numbers, de-risked revenue. The audit will show you the specific gaps to close to lift your multiple.";
+    } else {
+      archetype = 'Asset-Grade';
+      copy = "You're in rare company. This already looks like an asset, not a job. At this level the work is protecting and compounding the multiple: tightening margins, proving predictability, and being ready if the right offer ever comes. The audit is a useful second pair of eyes on where the last points of value hide.";
+    }
+
+    document.getElementById('resultsTitle').textContent = 'Your agency today: ' + archetype;
+    document.getElementById('scoreText').textContent = total + ' / 8';
+    document.getElementById('scoreBar').setAttribute('aria-valuenow', String(total));
+
+    const gaps = dims.map(d => {
+      const v = parseInt(answers[d.q] || '0', 10);
+      const good = v === 2;
+      return '<li class="gap-item ' + (good ? 'good' : 'gap') + '"><span class="gap-mark">' + (good ? '✓' : '✗') + '</span>' + d.label + '</li>';
+    }).join('');
+
+    document.getElementById('resultsText').innerHTML = '<p>' + copy + '</p><ul class="gap-list">' + gaps + '</ul>';
+
+    resultsDiv.classList.add('show');
+    const scoreFill = document.getElementById('scoreFill');
+    requestAnimationFrame(() => { scoreFill.style.width = pct + '%'; });
+  }
+</script>
+
+</body>
+</html>
