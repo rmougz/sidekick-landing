@@ -12,6 +12,7 @@ files first - they answer everything the lead-magnet-creator skill asks for, so
 you should rarely need to ask the user for brand, voice, ICP, proof, or the
 conversion action.
 
+- `context/positioning.md` — the north-star outcome (the **Asset-Grade Agency**) + the maturity ladder. Weave through every asset.
 - `context/brand-kit.md` — colours, fonts, logo, and how to theme the skill scaffold.
 - `context/voice-and-tone.md` — how Sidekick writes (incl. hard rules: no em dashes, no hype).
 - `context/icp.md` — who each asset is for, and who to repel.

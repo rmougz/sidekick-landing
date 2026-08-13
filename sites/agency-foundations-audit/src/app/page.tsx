@@ -123,7 +123,7 @@ const results = [
 ];
 
 const stats = [
-  { value: "50+", label: "Agencies helped" },
+  { value: "100+", label: "Agencies helped" },
   { value: "6 yrs", label: "Specialising in agencies" },
 ];
 

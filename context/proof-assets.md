@@ -5,7 +5,7 @@ credibility - use exact figures, attributed to named clients.
 
 ## Headline stats
 
-- **50+** agencies helped
+- **100+** agencies helped
 - **+19.5%** average margin improvement (without adding a new client)
 - **6 years** working with agencies
 

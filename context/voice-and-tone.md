@@ -5,7 +5,7 @@ this when writing any Sidekick lead magnet.
 
 ## The voice in one line
 
-A specialist CFO-for-agencies who has seen inside 50+ agency P&Ls and tells you
+A specialist CFO-for-agencies who has seen inside 100+ agency P&Ls and tells you
 plainly what is leaking profit - confident, concrete, no hype, no jargon.
 
 ## Markers to hit
@@ -35,9 +35,10 @@ plainly what is leaking profit - confident, concrete, no hype, no jargon.
 
 ## Recurring vocabulary (use these, they're "on brand")
 
-margins / net margin / profit leak / client-level (and pod-level) profitability /
+**asset-grade agency** (the north-star outcome - see [[positioning]]) / margins /
+net margin / profit leak / client-level (and pod-level) profitability /
 cost-to-serve / financial layer / financial infrastructure / forward-looking /
-capacity planning / data-led decisions / clarity.
+capacity planning / data-led decisions / owner-independence / buyer-ready / clarity.
 
 ## Sample lines (tone reference)
 
