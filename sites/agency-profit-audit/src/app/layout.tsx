@@ -26,7 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${plusJakarta.variable} antialiased`}>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <main>{children}</main>
+      </body>
       <GoogleAnalytics gaId="G-CD60YKH4S1" />
     </html>
   );

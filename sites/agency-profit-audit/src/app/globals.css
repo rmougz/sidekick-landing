@@ -5,6 +5,14 @@
   --color-sk-navy-dark: #091e30;
   --color-sk-coral: #fd605b;
   --color-sk-mint: #99ddcc;
+  /* Light-background variants. The brand coral and mint are tuned for the dark
+     navy sections; on white or sk-grey they fall to 2.5-3.0:1, below the 4.5:1
+     WCAG AA floor for the small label text they are used on. These are the same
+     hues darkened until they clear AA on white AND on sk-grey, so anything sat
+     on a pale background uses these instead. Coral-dark also carries white
+     button text at 5.7:1. */
+  --color-sk-coral-dark: #b83b36;
+  --color-sk-teal: #157a63;
   --color-sk-pink: #ffcecd;
   --color-sk-grey: #eee8e8;
   --color-sk-text: #d4d4d4;

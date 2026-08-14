@@ -6,21 +6,6 @@ import Image from "next/image";
 
 const scorecards = [
   {
-    name: "Usman",
-    company: "Guided Growth",
-    photo: "/clients/USMAN.webp",
-    stats: [
-      { label: "Revenue added", value: "+$200K" },
-      { label: "Net margin", value: "77.25%" },
-      { label: "Extra cash/mo", value: "$154K" },
-    ],
-    intangibles: [
-      "Group level P&L",
-      "Finance team trained",
-      "Automated systems",
-    ],
-  },
-  {
     name: "Sam Winsbury",
     company: "Kurogo",
     photo: "/clients/SAM.jpeg",
@@ -32,6 +17,34 @@ const scorecards = [
       "Pod level profitability",
       "Pricing optimised",
       "Financial modelling",
+    ],
+  },
+  {
+    name: "Paul",
+    company: "Literal Humans",
+    photo: "/clients/PAUL.png",
+    stats: [
+      { label: "Net margin growth", value: "+26.72%" },
+    ],
+    intangibles: [
+      "Real time cash forecast",
+      "Client level profitability",
+      "Funding secured",
+    ],
+  },
+  {
+    name: "Usman",
+    company: "Guided Growth",
+    photo: "/clients/USMAN.webp",
+    stats: [
+      { label: "Revenue added", value: "+$200K" },
+      { label: "Margin improved", value: "+36.3%" },
+      { label: "Net cash in the bank", value: "+$154K" },
+    ],
+    intangibles: [
+      "Group level P&L",
+      "Finance team trained",
+      "Automated systems",
     ],
   },
   {
@@ -47,19 +60,6 @@ const scorecards = [
       "Financial modelling",
       "Proactive decision making",
       "Scalable infrastructure",
-    ],
-  },
-  {
-    name: "Paul",
-    company: "Literal Humans",
-    photo: "/clients/PAUL.png",
-    stats: [
-      { label: "Net margin growth", value: "+26.72%" },
-    ],
-    intangibles: [
-      "Real time cash forecast",
-      "Client level profitability",
-      "Funding secured",
     ],
   },
   {
@@ -119,10 +119,11 @@ function ScorecardItem({
           className="h-16 w-16 shrink-0 rounded-full border-[3px] border-sk-navy object-cover"
         />
         <div className="min-w-0">
-          <div className="text-xl font-extrabold text-sk-navy truncate">
+          {/* No truncate: the longest name (Oliver Duffy Lee) clipped at 320px. */}
+          <div className="text-xl font-extrabold leading-tight text-sk-navy">
             {scorecard.name}
           </div>
-          <div className="text-sm font-medium text-sk-navy/50">
+          <div className="text-sm font-medium text-sk-navy/70">
             {scorecard.company}
           </div>
         </div>
@@ -131,7 +132,7 @@ function ScorecardItem({
       <div className={wide ? "grid grid-cols-2 max-md:grid-cols-1" : ""}>
         {/* Stats row */}
         <div className={`px-6 pt-6 pb-2 ${wide ? "border-r border-sk-grey max-md:border-r-0 max-md:border-b" : ""}`}>
-          <p className="mb-5 text-[13px] font-bold uppercase tracking-[3px] text-sk-coral">
+          <p className="mb-5 text-[13px] font-bold uppercase tracking-[3px] text-sk-coral-dark">
             Key results
           </p>
           <div className="grid grid-cols-3 gap-4 max-sm:grid-cols-2">
@@ -140,7 +141,7 @@ function ScorecardItem({
                 <div className="text-[30px] font-extrabold leading-none text-sk-navy max-sm:text-[24px]">
                   {stat.value}
                 </div>
-                <div className="mt-1.5 text-[13px] font-medium text-sk-navy/50">
+                <div className="mt-1.5 text-[13px] font-medium text-sk-navy/70">
                   {stat.label}
                 </div>
               </div>
@@ -151,7 +152,7 @@ function ScorecardItem({
         {/* Intangible benefits */}
         <div className={`px-6 pb-6 ${wide ? "pt-6" : ""}`}>
           {!wide && <div className="my-4 h-px bg-sk-grey" />}
-          <p className="mb-4 text-[13px] font-bold uppercase tracking-[3px] text-sk-mint">
+          <p className="mb-4 text-[13px] font-bold uppercase tracking-[3px] text-sk-teal">
             What changed
           </p>
           <ul className={wide ? "grid grid-cols-3 gap-3 max-md:grid-cols-1 max-md:space-y-0" : "space-y-3"}>

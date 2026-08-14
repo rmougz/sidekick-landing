@@ -1,7 +1,10 @@
 import Image from "next/image";
 import WistiaPlayer from "./wistia-player";
 import ResultsSection from "./results-section";
+import FaqAccordion from "./faq-accordion";
+import SiteFooter from "./site-footer";
 import { watchVideos } from "@/lib/videos";
+import { watchFaqs } from "@/lib/faqs";
 
 // Shared content for /watch-before-call and /call-confirmed. Single-purpose
 // pre-call page: no site nav, no full site footer. Most traffic arrives from
@@ -28,7 +31,7 @@ export default function WatchContent() {
           </h1>
           <p
             aria-hidden
-            className="mb-6 text-[13px] font-bold uppercase tracking-[3px] text-sk-coral max-sm:text-[11px]"
+            className="mb-6 text-[13px] font-bold uppercase tracking-[3px] text-sk-coral max-sm:text-[12px]"
           >
             You&apos;re booked. Five minutes of context before we talk.
           </p>
@@ -58,12 +61,28 @@ export default function WatchContent() {
 
       <ResultsSection />
 
+      {/* Same accordion as the landing, on the dark page background rather
+          than the landing's light band. */}
+      <section className="px-5 py-15">
+        <div className="mx-auto max-w-[820px]">
+          <p className="mb-3 text-center text-[13px] font-bold uppercase tracking-[2px] text-sk-coral">
+            Common questions
+          </p>
+          <h2 className="mb-10 text-center text-[32px] font-extrabold leading-[1.15] text-white max-sm:text-2xl">
+            Before we talk
+          </h2>
+          <FaqAccordion faqs={watchFaqs} />
+        </div>
+      </section>
+
       <section className="px-5 py-10 text-center">
         <p className="text-[13px] text-sk-muted">
           Need to move the call? The reschedule link is in your confirmation
           email.
         </p>
       </section>
+
+      <SiteFooter />
     </>
   );
 }

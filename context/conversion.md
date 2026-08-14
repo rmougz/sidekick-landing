@@ -7,18 +7,22 @@ with newsletter signups, social follows, or secondary CTAs.
 
 **Book the Agency Profit Audit** — a free 45-minute diagnostic call.
 
-- **Booking URL (Calendly):** `https://calendly.com/sidekick-accounting/sidekickcfodiscovery`
-- **Implementation on the existing landing:** Calendly popup widget (loads
-  `widget.css` + `widget.js`, opens via `window.Calendly.initPopupWidget({ url })`).
-  Standalone HTML lead magnets can either open the same popup or link directly to
-  the Calendly URL.
+- **Booking URL (Calendly):** `https://calendly.com/sidekick-accounting/agencyprofitaudit`
+  (the older `sidekickcfodiscovery` event was deleted and 404s).
+- **Implementation on the existing landing:** a Typeform application popup
+  (`@typeform/embed-react`, form id `FNnck2Hf`), which qualifies the lead and
+  then embeds the Calendly event above on its final question. Standalone HTML
+  lead magnets can link directly to the Typeform or the Calendly URL.
 - **Positioning copy:** "45 minutes. No pitch. You'll leave with a clear financial
   picture of your business."
 - **Primary CTA label:** "Book your Agency Profit Audit".
 
 ## Post-conversion
 
-- Thank-you page exists in the landing app at `/thank-you` ("You're booked in.").
+- Qualified bookers land on `/call-confirmed` (pre-call videos + FAQ). The old
+  `/thank-you` page has been removed and 301s there.
+- Applicants below the revenue threshold land on `/application-received`, which
+  routes them to the self-serve benchmark tool. No email is sent to that group.
 
 ## UTM convention (tag every CTA by position)
 
