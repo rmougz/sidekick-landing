@@ -10,21 +10,6 @@ const FOUNDATIONS_ZONE =
   process.env.FOUNDATIONS_ZONE_URL ?? "https://agency-foundations-audit.vercel.app";
 
 const nextConfig: NextConfig = {
-  // /thank-you was the old post-booking page. It is gone, but the URL may still
-  // be configured as a redirect target in Calendly, so it is sent to the page
-  // that replaced it rather than left to 404. Note this means a hit on the old
-  // URL lands on /call-confirmed and fires its Schedule event, which is correct
-  // for a real booking.
-  async redirects() {
-    return [
-      {
-        source: "/thank-you",
-        destination: "/call-confirmed",
-        permanent: true,
-      },
-    ];
-  },
-
   async rewrites() {
     return [
       {
