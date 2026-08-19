@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import LegalPage, {
-  LegalHeading,
-  LegalLink,
-  Placeholder,
-} from "@/components/legal-page";
+import LegalPage, { LegalHeading, LegalLink } from "@/components/legal-page";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | Sidekick Accounting Ltd",
@@ -130,7 +126,7 @@ export default function Privacy() {
         <LegalLink href="mailto:hello@sidekickaccounting.co.uk">
           hello@sidekickaccounting.co.uk
         </LegalLink>{" "}
-        or at <Placeholder>[REGISTERED ADDRESS]</Placeholder>. We will respond
+        or at 167-169 Great Portland Street, London, W1W 5PF. We will respond
         within the period required under UK GDPR.
       </p>
       <p>
@@ -140,7 +136,7 @@ export default function Privacy() {
       </p>
 
       <p className="pt-6 text-sm text-sk-muted">
-        Last updated: <Placeholder>[DATE]</Placeholder>
+        Last updated: 19 August 2026
       </p>
     </LegalPage>
   );

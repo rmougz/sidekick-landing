@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import LegalPage, { LegalHeading, Placeholder } from "@/components/legal-page";
+import LegalPage, { LegalHeading, LegalLink } from "@/components/legal-page";
 
 export const metadata: Metadata = {
   title: "Terms of Use | Sidekick Accounting Ltd",
@@ -14,7 +14,13 @@ export default function Terms() {
     <LegalPage title="Terms of Use">
       <p>
         This website is operated by Sidekick Accounting Ltd (company number
-        12250170). <Placeholder>[ICAEW REGULATORY WORDING]</Placeholder>
+        12250170). We observe and act in accordance with the bye-laws,
+        regulations and code of ethics of the Institute of Chartered
+        Accountants in England and Wales. Those requirements are available at{" "}
+        <LegalLink href="https://www.icaew.com/regulation">
+          icaew.com/regulation
+        </LegalLink>
+        .
       </p>
 
       <LegalHeading>Information only</LegalHeading>
@@ -73,7 +79,7 @@ export default function Terms() {
       </p>
 
       <p className="pt-6 text-sm text-sk-muted">
-        Last updated: <Placeholder>[DATE]</Placeholder>
+        Last updated: 19 August 2026
       </p>
     </LegalPage>
   );

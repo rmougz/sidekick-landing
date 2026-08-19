@@ -4,19 +4,9 @@ import SiteFooter from "./site-footer";
 // Shell for /privacy and /terms: the zone's logo header, a readable measure of
 // body text on the standard dark background, and the shared footer.
 
-// Wraps content that must be filled in before publication. Styled to be
-// impossible to miss on the page rather than quietly blending in.
-export function Placeholder({ children }: { children: React.ReactNode }) {
-  return (
-    // box-decoration-clone keeps the highlight a complete rounded box on every
-    // line when the placeholder wraps, instead of one box split across lines.
-    <span className="rounded bg-sk-coral/25 px-1.5 py-0.5 font-semibold text-white [-webkit-box-decoration-break:clone] [box-decoration-break:clone]">
-      {children}
-    </span>
-  );
-}
-
-// Inline link styling shared by the legal pages.
+// Inline link styling shared by the legal pages. The padding is cancelled by an
+// equal negative margin, so the tap target reaches ~44px without disturbing the
+// paragraph's line spacing.
 export function LegalLink({
   href,
   children,
