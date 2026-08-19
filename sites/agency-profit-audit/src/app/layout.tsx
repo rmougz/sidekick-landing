@@ -17,6 +17,14 @@ export const metadata: Metadata = {
   // search results (do NOT block it in robots.txt: Google must crawl the
   // page to see this tag).
   robots: { index: false, follow: false },
+  // Meta Business Manager domain verification. Emitted by Next into <head> as
+  // a static server-rendered tag: Meta's crawler will not see it if it is
+  // injected by client JS or placed outside <head>.
+  verification: {
+    other: {
+      "facebook-domain-verification": "w1lcwy12412di9izhwxlnusu3qig4w",
+    },
+  },
 };
 
 export default function RootLayout({
