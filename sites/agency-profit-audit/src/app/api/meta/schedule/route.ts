@@ -29,6 +29,24 @@ export async function POST(request: NextRequest) {
     .split(",")[0]
     .trim();
 
+  // Diagnostic for the Schedule double-send. One line per invocation of THIS
+  // route, so the Vercel log count for a booking can be compared against the
+  // server-event count Events Manager reports for the same booking. If Meta
+  // shows two server events and this logged once, the second event was sent by
+  // something other than this app. Nothing sensitive: the token is never
+  // logged, and event_id is an opaque id we generated.
+  console.log(
+    JSON.stringify({
+      tag: "capi_schedule_out",
+      eventId,
+      sourceUrl: typeof body?.sourceUrl === "string" ? body.sourceUrl : null,
+      hasFbp: Boolean(body?.fbp),
+      hasFbc: Boolean(body?.fbc),
+      testEvent: Boolean(process.env.META_TEST_EVENT_CODE),
+      at: new Date().toISOString(),
+    })
+  );
+
   const payload = {
     data: [
       {
@@ -66,6 +84,13 @@ export async function POST(request: NextRequest) {
     console.error("Meta CAPI Schedule event failed:", res.status, detail);
     return Response.json({ error: "Meta CAPI request failed" }, { status: 502 });
   }
+
+  // events_received / fbtrace_id from Meta, so an accepted send is auditable
+  // against Events Manager without re-running the booking.
+  const ack = await res.json().catch(() => null);
+  console.log(
+    JSON.stringify({ tag: "capi_schedule_ack", eventId, ack })
+  );
 
   return Response.json({ ok: true });
 }
