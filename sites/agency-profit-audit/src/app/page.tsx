@@ -53,8 +53,8 @@ const testimonials = [
 ];
 
 const credibility = [
-  "EY & banking background",
-  "Team of ACA-qualified accountants (CPA equivalent)",
+  "Big 4 Trained Team",
+  "Certified Accountants",
   "100+ agencies served",
   "Onboarding 3 new clients a month",
 ];
