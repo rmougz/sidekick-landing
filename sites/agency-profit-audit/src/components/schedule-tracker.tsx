@@ -1,91 +1,45 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { PIXEL_ID, ensurePixel, getFbc, readCookie } from "@/lib/meta-pixel";
 
 // Fires the Meta "Schedule" event once per booking on /call-confirmed: browser
 // pixel + server-side Conversions API, sharing one event_id so Meta
-// deduplicates the pair. The pixel is only ever loaded here — no other route
-// emits Meta events.
+// deduplicates the pair. This is the only route that emits a conversion.
 //
 // Deduplication is two layers, because either alone leaves a hole:
 //
-//  1. event_id. When Calendly passes the booking through on the redirect
-//     ("Pass event details to your redirect page"), the id is derived from
-//     invitee_uuid, so every fire for one booking sends the SAME event_id and
+//  1. event_id. The Typeform carries a per-submission sk_id through to the
+//     redirect, so every fire for one submission sends the SAME event_id and
 //     Meta collapses them server-side — across tabs, devices and cleared
-//     storage. Without that param we fall back to a random id, which only
-//     dedupes the pixel/CAPI pair.
+//     storage. invitee_uuid is still accepted in case the booking ever comes
+//     straight from Calendly. Without any of them we fall back to a random id,
+//     which only dedupes the pixel/CAPI pair.
 //
 //  2. Local guard. localStorage, not sessionStorage: sessionStorage is
 //     per-tab, so opening the confirmation link in a second tab produced a
-//     second Schedule event with a fresh event_id. Keyed on the booking when
-//     we have one (permanent, and a genuine second booking has a different
-//     uuid so it still counts). Without a booking id the generic guard expires
-//     after GUARD_TTL_MS, so tab-hopping around one booking is suppressed but
-//     a real booking weeks later is not.
+//     second Schedule event with a fresh event_id. Keyed on the submission
+//     when we have one (permanent, and a genuinely different submission has a
+//     different id so it still counts). Without one the generic guard expires
+//     after GUARD_TTL_MS.
 
-const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "";
 const STORAGE_KEY = "sk-schedule-fired";
 const GUARD_TTL_MS = 30 * 60 * 1000;
 
-interface Fbq {
-  (...args: unknown[]): void;
-  callMethod?: (...args: unknown[]) => void;
-  queue: unknown[][];
-  push: Fbq;
-  loaded: boolean;
-  version: string;
-}
-
-type FbqWindow = Window & { fbq?: Fbq; _fbq?: Fbq };
-
-// The standard Meta pixel bootstrap: install a queueing stub, then load
-// fbevents.js, which drains the queue.
-function ensurePixel(pixelId: string): Fbq {
-  const w = window as FbqWindow;
-  if (!w.fbq) {
-    const fbq = ((...args: unknown[]) => {
-      if (fbq.callMethod) {
-        fbq.callMethod(...args);
-      } else {
-        fbq.queue.push(args);
-      }
-    }) as Fbq;
-    fbq.push = fbq;
-    fbq.loaded = true;
-    fbq.version = "2.0";
-    fbq.queue = [];
-    w.fbq = fbq;
-    if (!w._fbq) w._fbq = fbq;
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = "https://connect.facebook.net/en_US/fbevents.js";
-    document.head.appendChild(script);
-  }
-  w.fbq("init", pixelId);
-  return w.fbq;
-}
-
-function readCookie(name: string): string | undefined {
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : undefined;
-}
-
-// _fbc cookie if Meta set one, else derive from a click id in the URL.
-function getFbc(): string | undefined {
-  const cookie = readCookie("_fbc");
-  if (cookie) return cookie;
-  const fbclid = new URLSearchParams(window.location.search).get("fbclid");
-  return fbclid ? `fb.1.${Date.now()}.${fbclid}` : undefined;
-}
-
-// Calendly's opaque booking identifier, when it is passed on the redirect.
-// Deliberately only the uuid params — never invitee_email, which would put
-// personal data in an event id and in localStorage.
-function getBookingId(): string | null {
+// Identifier for this specific submission. sk_id is minted on the landing page
+// and round-tripped through the Typeform's hidden fields.
+function getSubmissionId(): string | null {
   const p = new URLSearchParams(window.location.search);
-  const id = p.get("invitee_uuid") ?? p.get("event_uuid");
-  return id && id.trim() ? id.trim() : null;
+  const id = p.get("sk_id") ?? p.get("invitee_uuid") ?? p.get("event_uuid");
+  if (!id) return null;
+  const trimmed = id.trim();
+  if (!trimmed) return null;
+  // Guard against an unresolved piping token, e.g. if the redirect references
+  // {{hidden:sk_id}} before that hidden field exists on the form. Treating the
+  // literal token as an id would give every booking the same event_id and
+  // collapse the lot into a single conversion — far worse than no id at all.
+  if (trimmed.includes("{{") || trimmed.includes("}}")) return null;
+  return trimmed;
 }
 
 // Best-effort persistent store. Falls back to sessionStorage, then to nothing
@@ -113,23 +67,25 @@ export default function ScheduleTracker() {
     if (fired.current || !PIXEL_ID) return;
     fired.current = true;
 
-    const bookingId = getBookingId();
+    const submissionId = getSubmissionId();
     const store = getStore();
-    const key = bookingId ? `${STORAGE_KEY}:${bookingId}` : STORAGE_KEY;
+    const key = submissionId ? `${STORAGE_KEY}:${submissionId}` : STORAGE_KEY;
 
     if (store) {
       const raw = store.getItem(key);
       if (raw) {
-        // A booking-keyed guard never expires: that booking is already counted.
-        if (bookingId) return;
+        // A submission-keyed guard never expires: it is already counted.
+        if (submissionId) return;
         // The generic guard only suppresses repeats close in time.
         const ts = Number(raw);
         if (!Number.isNaN(ts) && Date.now() - ts < GUARD_TTL_MS) return;
       }
     }
 
-    // Same booking => same event_id on every fire, so Meta collapses repeats.
-    const eventId = bookingId ? `schedule-${bookingId}` : crypto.randomUUID();
+    // Same submission => same event_id on every fire, so Meta collapses repeats.
+    const eventId = submissionId
+      ? `schedule-${submissionId}`
+      : crypto.randomUUID();
 
     try {
       store?.setItem(key, String(Date.now()));

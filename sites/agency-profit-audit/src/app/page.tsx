@@ -3,6 +3,7 @@ import Script from "next/script";
 import CTAButton from "@/components/cta-button";
 import FaqAccordion from "@/components/faq-accordion";
 import NextSteps from "@/components/next-steps";
+import MetaPixel from "@/components/meta-pixel";
 import ResultsSection from "@/components/results-section";
 import SiteFooter from "@/components/site-footer";
 import { landingFaqs } from "@/lib/faqs";
@@ -129,6 +130,10 @@ function TestimonialCard({
 export default function Home() {
   return (
     <>
+      {/* Base pixel + PageView. This page is the ad destination, so it is
+          where Meta needs to see the click and set its _fbc cookie. */}
+      <MetaPixel />
+
       {/* Hero */}
       {/* Mobile spacing is tightened (pt, logo and video margins) so the CTA
           clears the fold on a 390x844 phone. */}
