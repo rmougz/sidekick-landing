@@ -1,4 +1,8 @@
 @import "tailwindcss";
+/* Popup overlay, spinner and close button for the Typeform embed. Bundled
+   here so it is part of the page's single stylesheet rather than fetched
+   from Typeform's CDN when the popup opens. */
+@import "@typeform/embed/build/css/popup.css";
 
 @theme inline {
   --color-sk-navy: #0e2d48;
@@ -25,4 +29,30 @@ body {
   background: var(--color-sk-navy);
   color: #ffffff;
   -webkit-font-smoothing: antialiased;
+}
+
+/* CTA "opening" state. The hydrated button renders .tf-cta-spinner itself;
+   the ::before ring covers a tap that lands before React has hydrated, when
+   only the inline script from cta-prehydrate-script.tsx has run (that script
+   sets aria-busy; hydration sets data-tf-live). */
+@keyframes tf-cta-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.tf-cta-spinner,
+button[data-tf-cta][aria-busy="true"]:not([data-tf-live])::before {
+  content: "";
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-right: 0.6em;
+  vertical-align: -0.1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: tf-cta-spin 0.8s linear infinite;
+}
+button[data-tf-cta][aria-busy="true"]:not([data-tf-live]) {
+  cursor: progress;
 }

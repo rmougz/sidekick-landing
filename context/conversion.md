@@ -10,8 +10,11 @@ with newsletter signups, social follows, or secondary CTAs.
 - **Booking URL (Calendly):** `https://calendly.com/sidekick-accounting/agencyprofitaudit`
   (the older `sidekickcfodiscovery` event was deleted and 404s).
 - **Implementation on the existing landing:** a Typeform application popup
-  (`@typeform/embed-react`, form id `FNnck2Hf`), which qualifies the lead and
-  then embeds the Calendly event above on its final question. Standalone HTML
+  (`@typeform/embed` `createPopup`, form id `FNnck2Hf`), which qualifies the
+  lead and then embeds the Calendly event above on its final question. The
+  landing page preconnects to the Typeform origins and warms the form's
+  renderer in a hidden, tracking-disabled iframe after load, so the popup
+  opens fast on in-app mobile traffic (`src/lib/typeform.ts`). Standalone HTML
   lead magnets can link directly to the Typeform or the Calendly URL.
 - **Positioning copy:** "45 minutes. No pitch. You'll leave with a clear financial
   picture of your business."

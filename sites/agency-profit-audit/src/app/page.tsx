@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Script from "next/script";
 import CTAButton from "@/components/cta-button";
+import CtaPrehydrateScript from "@/components/cta-prehydrate-script";
 import FaqAccordion from "@/components/faq-accordion";
 import NextSteps from "@/components/next-steps";
 import MetaPixel from "@/components/meta-pixel";
@@ -133,6 +134,10 @@ export default function Home() {
       {/* Base pixel + PageView. This page is the ad destination, so it is
           where Meta needs to see the click and set its _fbc cookie. */}
       <MetaPixel />
+
+      {/* Catches a CTA tap that lands before React has hydrated. Must sit
+          above the hero so it is parsed before the first button is. */}
+      <CtaPrehydrateScript />
 
       {/* Hero */}
       {/* Mobile spacing is tightened (pt, logo and video margins) so the CTA
