@@ -1,8 +1,8 @@
 import Image from "next/image";
-import Script from "next/script";
 import CTAButton from "@/components/cta-button";
 import CtaPrehydrateScript from "@/components/cta-prehydrate-script";
 import FaqAccordion from "@/components/faq-accordion";
+import HeroVideo from "@/components/hero-video";
 import NextSteps from "@/components/next-steps";
 import MetaPixel from "@/components/meta-pixel";
 import ResultsSection from "@/components/results-section";
@@ -171,7 +171,9 @@ export default function Home() {
             Agencies with us twelve months or more improve margins by 19.5% on
             average.
           </p>
-          <ul className="mx-auto mb-8 mt-5 flex max-w-[960px] flex-wrap items-center justify-center gap-x-6 gap-y-2.5 max-sm:w-fit max-sm:flex-col max-sm:items-start">
+          {/* Two columns on phones rather than a four-row stack: it keeps the
+              video higher on the first screen. */}
+          <ul className="mx-auto mb-8 mt-5 flex max-w-[960px] flex-wrap items-center justify-center gap-x-6 gap-y-2.5 max-sm:mb-6 max-sm:grid max-sm:grid-cols-2 max-sm:gap-x-4 max-sm:text-left">
             {credibility.map((item) => (
               <li
                 key={item}
@@ -182,22 +184,11 @@ export default function Home() {
               </li>
             ))}
           </ul>
-          <div className="mx-auto mb-10 max-w-[800px] rounded-[10px] bg-sk-navy-dark p-2.5 max-sm:mb-6">
-            <Script src="https://fast.wistia.com/player.js" strategy="lazyOnload" />
-            <Script src="https://fast.wistia.com/embed/i72bt3lrdz.js" strategy="lazyOnload" />
-            {/* Aspect ratio is locked on the wrapper so the box keeps its
-                height when the Wistia custom element upgrades. Without it the
-                player resizes on definition and everything below it shifts. */}
-            <div
-              className="w-full rounded-md overflow-hidden"
-              style={{ aspectRatio: "16 / 9" }}
-              dangerouslySetInnerHTML={{
-                __html: `
-                  <style>wistia-player[media-id='i72bt3lrdz']:not(:defined){background:center/contain no-repeat url('https://fast.wistia.com/embed/medias/i72bt3lrdz/swatch');display:block;filter:blur(5px);padding-top:56.25%}</style>
-                  <wistia-player media-id="i72bt3lrdz" aspect="1.7777777777777777" preload="none"></wistia-player>
-                `,
-              }}
-            />
+          {/* On phones the player bleeds to the viewport edges: every paid
+              visitor arrives on a phone, and inside the padding the 16:9 frame
+              was only 330px wide. */}
+          <div className="mx-auto mb-10 max-w-[800px] rounded-[10px] bg-sk-navy-dark p-2.5 max-sm:-mx-5 max-sm:mb-6 max-sm:rounded-none max-sm:p-0">
+            <HeroVideo />
           </div>
 
           <CTAButton>Book your Agency Profit Audit</CTAButton>

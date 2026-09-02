@@ -56,11 +56,23 @@ export function takePendingClick(button: Element): boolean {
 // starts after load too. After load it starts on whichever comes first: the
 // page going idle, the first scroll/touch, or a CTA entering the viewport.
 
-type WarmupState = "unarmed" | "armed" | "started" | "skipped";
+type WarmupState = "unarmed" | "armed" | "waiting" | "started" | "skipped";
 
 let state: WarmupState = "unarmed";
 let observer: IntersectionObserver | null = null;
 const disarmers: Array<() => void> = [];
+
+// The warm-up yields to the hero video. Both start after the load event and
+// would otherwise share the connection; the VSL is what sells, so it gets the
+// first seconds of bandwidth. hero-video.tsx holds the warm-up until the video
+// has played a few seconds, or a timeout passes, and the gate is read at fire
+// time so it works whichever component mounts first.
+let warmupGate: Promise<void> = Promise.resolve();
+
+/** Delays the start of the warm-up until `until` resolves. */
+export function holdTypeformWarmup(until: Promise<void>) {
+  warmupGate = until;
+}
 
 function whenLoaded(fn: () => void) {
   if (document.readyState === "complete") fn();
@@ -105,9 +117,13 @@ export function armTypeformWarmup(cta: Element) {
 
   const fire = () => {
     if (state !== "armed") return;
-    state = "started";
+    state = "waiting";
     disarm();
-    runWarmup();
+    void warmupGate.then(() => {
+      if (state !== "waiting") return;
+      state = "started";
+      runWarmup();
+    });
   };
   const fireWhenLoaded = () => whenLoaded(fire);
 
@@ -136,12 +152,27 @@ export function armTypeformWarmup(cta: Element) {
   }
 }
 
+const openListeners = new Set<() => void>();
+
+/**
+ * Runs `listener` every time the application popup is opened — the hero video
+ * uses it to pause, so a playing stream neither talks over the form nor
+ * starves its load. Returns the unsubscribe function.
+ */
+export function onTypeformOpen(listener: () => void): () => void {
+  openListeners.add(listener);
+  return () => {
+    openListeners.delete(listener);
+  };
+}
+
 /** The real popup has opened: its own load fills the cache, so stand down. */
 export function markTypeformOpened() {
-  if (state === "armed") {
+  if (state === "armed" || state === "waiting") {
     state = "skipped";
     disarm();
   }
+  openListeners.forEach((listener) => listener());
 }
 
 function runWarmup() {
