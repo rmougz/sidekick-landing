@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Script from "next/script";
 import { preconnect } from "react-dom";
 import { holdTypeformWarmup, onTypeformOpen } from "@/lib/typeform";
@@ -16,21 +17,33 @@ const MEDIA_ID = "i72bt3lrdz";
 const ASPECT = 16 / 9;
 const SWATCH = `https://fast.wistia.com/embed/medias/${MEDIA_ID}/swatch`;
 
-// Player script and media delivery hosts. Preconnected from the head so the
-// post-load fetches skip DNS and TLS.
+// The hosts on the video's critical path, preconnected from the head so the
+// post-load fetches skip DNS and TLS: player scripts and media data
+// (fast.wistia.com), plugins and engine (fast.wistia.net), HLS segments
+// (embed-cloudfront.wistia.com). Measured 2026-09-03 on the live page;
+// embed-ssl.wistia.com only serves the poster the player skips when
+// autoplaying, and the analytics hosts are off the critical path.
 const WISTIA_ORIGINS = [
   "https://fast.wistia.com",
   "https://fast.wistia.net",
-  "https://embed-ssl.wistia.com",
+  "https://embed-cloudfront.wistia.com",
 ];
 
-// The Typeform warm-up (src/lib/typeform.ts) is held until the video has
-// played this much, so the player's ~500 KB of scripts and the first segments
-// get the connection to themselves (on Slow 4G that phase runs 10–14 s after
-// load). It is released early if autoplay is refused, and unconditionally
-// this long after the load event, so a failed player never holds it hostage.
-const VIDEO_HEAD_START_SECONDS = 3;
-const WARMUP_HOLD_MAX_MS = 25_000;
+// The poster: the opening frame as a normal optimised image, shown in the
+// player box from first paint until the video's first frame paints over it.
+// The player itself shows nothing while it boots (10 s+ on cellular), and it
+// skips its own thumbnail when autoplaying.
+const POSTER_SRC = "/vsl-poster.jpg";
+
+// The Typeform warm-up (src/lib/typeform.ts) idles until the video has
+// released it: the player's ~500 KB of scripts and the first segments get the
+// connection to themselves, but only until the first frame has painted. It
+// is released at once if the link is fast (the player was ready within this
+// long of the load event, so there is nothing to protect), if autoplay is
+// refused, and unconditionally this long after load. A sign of intent from
+// the visitor bypasses the gate entirely (see typeform.ts).
+const FAST_LINK_PLAYER_READY_MS = 2_500;
+const WARMUP_HOLD_MAX_MS = 12_000;
 
 // Autoplay-refused detection (iOS Low Power Mode, Data Saver, a webview
 // policy). The player's own state stays "beforeplay" while the first segments
@@ -61,6 +74,22 @@ type PlayerElement = HTMLElement & {
   state: string;
 };
 
+// Resolves when the player's current <video> has presented a frame. The
+// engine swaps <video> elements while it starts, so it is looked up at call
+// time, and requestVideoFrameCallback is missing on older WebKit, so a short
+// timer stands in for it.
+function whenFramePainted(player: PlayerElement): Promise<void> {
+  return new Promise((resolve) => {
+    const video = player.shadowRoot?.querySelector("video");
+    if (video && "requestVideoFrameCallback" in video) {
+      (video as HTMLVideoElement & { requestVideoFrameCallback: (cb: () => void) => number })
+        .requestVideoFrameCallback(() => resolve());
+    } else {
+      window.setTimeout(resolve, 150);
+    }
+  });
+}
+
 type Prompt = "none" | "sound" | "play";
 
 // The player markup, as one module-level object. React 19 re-applies
@@ -83,6 +112,7 @@ export default function HeroVideo() {
   const holderRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<PlayerElement | null>(null);
   const [prompt, setPrompt] = useState<Prompt>("none");
+  const [posterShown, setPosterShown] = useState(true);
 
   useEffect(() => {
     const holder = holderRef.current;
@@ -91,17 +121,20 @@ export default function HeroVideo() {
     const timers: number[] = [];
     const cleanups: Array<() => void> = [];
 
-    // Hold the Typeform warm-up until the video has had its head start.
+    // Hold the idle-triggered Typeform warm-up until the video's first frame.
     let releaseWarmup = () => {};
     holdTypeformWarmup(
       new Promise<void>((resolve) => {
         releaseWarmup = resolve;
       })
     );
-    const armTimeout = () =>
+    let loadedAt: number | null = null;
+    const onLoaded = () => {
+      loadedAt = performance.now();
       timers.push(window.setTimeout(releaseWarmup, WARMUP_HOLD_MAX_MS));
-    if (document.readyState === "complete") armTimeout();
-    else window.addEventListener("load", armTimeout, { once: true });
+    };
+    if (document.readyState === "complete") onLoaded();
+    else window.addEventListener("load", onLoaded, { once: true });
 
     const setup = async () => {
       const element = holder.querySelector("wistia-player");
@@ -114,6 +147,12 @@ export default function HeroVideo() {
       if (disposed) return;
       playerRef.current = player;
 
+      // A player that was ready this soon after load is on a link with room
+      // to spare: nothing to protect, let the warm-up go.
+      if (loadedAt !== null && performance.now() - loadedAt < FAST_LINK_PLAYER_READY_MS) {
+        releaseWarmup();
+      }
+
       // Silent autoplay is only worth anything with captions on screen.
       player.captionsEnabled = true;
 
@@ -121,16 +160,20 @@ export default function HeroVideo() {
         player.addEventListener(type, handler);
         cleanups.push(() => player.removeEventListener(type, handler));
       };
-      on("play", () => setPrompt(player.muted ? "sound" : "none"));
+      on("play", () => {
+        setPrompt(player.muted ? "sound" : "none");
+        // First frame: drop the poster and release the warm-up.
+        void whenFramePainted(player).then(() => {
+          if (disposed) return;
+          setPosterShown(false);
+          releaseWarmup();
+        });
+      });
       on("pause", () => setPrompt("none"));
       on("ended", () => setPrompt("none"));
       on("mute-change", (event) => {
         const { isMuted } = (event as CustomEvent<{ isMuted: boolean }>).detail;
         if (!isMuted) setPrompt("none");
-      });
-      on("second-change", (event) => {
-        const { second } = (event as CustomEvent<{ second: number }>).detail;
-        if (second >= VIDEO_HEAD_START_SECONDS) releaseWarmup();
       });
       const readyAt = performance.now();
       const refused = () => {
@@ -188,12 +231,29 @@ export default function HeroVideo() {
       {/* The aspect ratio on the wrapper keeps the box from resizing when the
           custom element upgrades. */}
       <div dangerouslySetInnerHTML={PLAYER_MARKUP} />
+      {posterShown && (
+        <Image
+          src={POSTER_SRC}
+          alt=""
+          width={1280}
+          height={720}
+          priority
+          sizes="(max-width: 640px) 100vw, 780px"
+          data-vsl-poster=""
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-[5] h-full w-full object-cover"
+        />
+      )}
       {prompt !== "none" && (
         <button
           type="button"
           data-vsl-unmute=""
           onClick={onPrompt}
-          className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-white px-5 py-3 text-[14px] font-bold text-sk-navy shadow-[0_4px_20px_rgba(0,0,0,0.45)] transition-colors hover:bg-sk-pink max-sm:bottom-8 max-sm:px-4 max-sm:py-2.5 max-sm:text-[13px]"
+          /* Sits above the caption window, which Wistia draws across the
+             bottom 20% of the picture: on a 219px-tall phone frame that is
+             175–207px, so the pill ends at 163px. On the 450px desktop frame
+             the window starts at ~360px and the pill ends at 354px. */
+          className="absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-white px-5 py-3 text-[14px] font-bold text-sk-navy shadow-[0_4px_20px_rgba(0,0,0,0.45)] transition-colors hover:bg-sk-pink max-sm:bottom-14 max-sm:px-4 max-sm:py-2.5 max-sm:text-[13px]"
         >
           <svg
             viewBox="0 0 24 24"

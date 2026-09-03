@@ -52,9 +52,16 @@ export function takePendingClick(button: Element): boolean {
 // own, and nothing here touches the Meta pixel or the CAPI route.
 //
 // It never runs before the window load event, so it cannot delay first paint,
-// DOMContentLoaded or load, and it does not compete with the VSL player, which
-// starts after load too. After load it starts on whichever comes first: the
-// page going idle, the first scroll/touch, or a CTA entering the viewport.
+// DOMContentLoaded or load. After load it starts on whichever comes first:
+//
+// - a sign of intent — the first scroll, touch, pointer or key, or a CTA
+//   scrolling into view — which starts it at once, ahead of the video gate
+//   below: someone moving towards the button is about to press it;
+// - the page going idle, which starts it once the hero video has released its
+//   gate (holdTypeformWarmup): the video gets the connection to itself for its
+//   first bytes, but only until its first frame paints or it is refused, never
+//   for a fixed span of playback. Starting late is worse than running slowly —
+//   a late warm-up is simply not there when the tap comes.
 
 type WarmupState = "unarmed" | "armed" | "waiting" | "started" | "skipped";
 
@@ -62,17 +69,19 @@ let state: WarmupState = "unarmed";
 let observer: IntersectionObserver | null = null;
 const disarmers: Array<() => void> = [];
 
-// The warm-up yields to the hero video. Both start after the load event and
-// would otherwise share the connection; the VSL is what sells, so it gets the
-// first seconds of bandwidth. hero-video.tsx holds the warm-up until the video
-// has played a few seconds, or a timeout passes, and the gate is read at fire
-// time so it works whichever component mounts first.
+// The idle trigger yields to the hero video: hero-video.tsx holds the warm-up
+// until the video's first frame has painted (or autoplay was refused, or a
+// short timeout passes). Intent triggers ignore the gate. The gate is read at
+// fire time so it works whichever component mounts first.
 let warmupGate: Promise<void> = Promise.resolve();
 
-/** Delays the start of the warm-up until `until` resolves. */
+/** Delays the idle-triggered start of the warm-up until `until` resolves. */
 export function holdTypeformWarmup(until: Promise<void>) {
   warmupGate = until;
 }
+
+// Scrolling by less than this is jitter, not intent.
+const INTENT_SCROLL_PX = 40;
 
 function whenLoaded(fn: () => void) {
   if (document.readyState === "complete") fn();
@@ -115,34 +124,55 @@ export function armTypeformWarmup(cta: Element) {
     return;
   }
 
-  const fire = () => {
+  const start = () => {
+    if (state !== "armed" && state !== "waiting") return;
+    state = "started";
+    disarm();
+    runWarmup();
+  };
+  // Intent: go now (after load), whatever the video is doing.
+  const onIntent = () => whenLoaded(start);
+  // Idle: go once the video has released its gate.
+  const onIdle_ = () => {
     if (state !== "armed") return;
     state = "waiting";
-    disarm();
     void warmupGate.then(() => {
-      if (state !== "waiting") return;
-      state = "started";
-      runWarmup();
+      if (state === "waiting") start();
     });
   };
-  const fireWhenLoaded = () => whenLoaded(fire);
 
   // 1. Page idle after load.
-  whenLoaded(() => onIdle(fire, 2000));
+  whenLoaded(() => onIdle(onIdle_, 2000));
 
-  // 2. First sign of intent.
-  const intentEvents = ["scroll", "touchstart", "pointerdown", "keydown"] as const;
+  // 2. First sign of intent: a touch, pointer or key anywhere, a mouse moving
+  //    at all (desktop links are fast enough that eager is fine), or a real
+  //    scroll.
+  const intentEvents = ["touchstart", "pointerdown", "keydown", "mousemove"] as const;
   for (const type of intentEvents) {
-    window.addEventListener(type, fireWhenLoaded, { once: true, passive: true });
+    window.addEventListener(type, onIntent, { once: true, passive: true });
   }
+  const onScroll = () => {
+    if (Math.abs(window.scrollY) < INTENT_SCROLL_PX) return;
+    window.removeEventListener("scroll", onScroll);
+    onIntent();
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
   disarmers.push(() => {
-    for (const type of intentEvents) window.removeEventListener(type, fireWhenLoaded);
+    for (const type of intentEvents) window.removeEventListener(type, onIntent);
+    window.removeEventListener("scroll", onScroll);
   });
 
-  // 3. A CTA scrolling into view.
+  // 3. A CTA scrolling into view. The first observation reports the initial
+  //    state, which is not a scroll; only a later entry counts.
   if ("IntersectionObserver" in window) {
+    let initial = true;
     observer = new IntersectionObserver((entries) => {
-      if (entries.some((entry) => entry.isIntersecting)) fireWhenLoaded();
+      const entered = entries.some((entry) => entry.isIntersecting);
+      if (initial) {
+        initial = false;
+        return;
+      }
+      if (entered) onIntent();
     });
     observer.observe(cta);
     disarmers.push(() => {
