@@ -2,15 +2,48 @@
 
 import Image from "next/image";
 import Script from "next/script";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
+import { preconnect } from "react-dom";
+import { createPopup, createWidget, type Popup } from "@typeform/embed";
+import { armTypeformWarmup, markTypeformOpened } from "@/lib/typeform-warmup";
 
-// "Book A Call" Typeform, embedded inline below as a standard widget (mirrors the
-// settings of live embed 01M45MZAE7SZ2S05J6Z2SMTSX6, plus the options a live embed
-// can't take): auto-resize so the frame fits each question instead of scrolling
-// internally, disable-scroll so wheel/swipe scrolls the page rather than jumping
-// questions, and inline-on-mobile so phones don't get a tap-to-open fullscreen modal.
+// "Book A Call" Typeform (same form as live embed 01M45MZAE7SZ2S05J6Z2SMTSX6).
+// Desktop: inline widget in #book, auto-resized so it never scrolls internally.
+// Phones: every Book CTA opens it as a fullscreen popup instead. Typeform's mobile
+// layout grows with whatever height its frame is given (measured 2026-10-05: a
+// 666px frame held 904px of content, 950px held 1046px), so an inline frame on a
+// phone always scrolls inside the page; a fullscreen popup is one scroll context.
 const TYPEFORM_FORM_ID = "NdUCXFPA";
+const TYPEFORM_IFRAME_PROPS = { title: "Book A Call" };
+// Below Tailwind's `sm` breakpoint, matching the max-sm:/sm: classes below.
+const MOBILE_QUERY = "(max-width: 639px)";
+
+// One popup for the whole page, created on first use. Each createPopup call
+// registers its own message listeners, so buttons share it rather than each
+// making one; the button that opened it is told when the form is ready/closed.
+let bookingPopup: Popup | null = null;
+let settleOpeningButton: (() => void) | null = null;
+function settleBookingPopup() {
+  settleOpeningButton?.();
+  settleOpeningButton = null;
+}
+function openBookingPopup(onSettled: () => void) {
+  settleBookingPopup();
+  settleOpeningButton = onSettled;
+  markTypeformOpened();
+  bookingPopup ??= createPopup(TYPEFORM_FORM_ID, {
+    transitiveSearchParams: true,
+    iframeProps: TYPEFORM_IFRAME_PROPS,
+    onReady: settleBookingPopup,
+    onClose: settleBookingPopup,
+  });
+  bookingPopup.open();
+}
+
+// If the form never reports ready (Typeform outage, dropped connection), give
+// the button back so the visitor can retry rather than leaving it stuck.
+const OPENING_TIMEOUT_MS = 20_000;
 
 // Featured client wins - traditional testimonial quotes (verbatim from
 // sidekickaccounting.co.uk/client-wins + the VSL script). First item is featured.
@@ -161,12 +194,7 @@ function LedgerBackground({ className = "" }: { className?: string }) {
   );
 }
 
-function scrollToBook(e: React.MouseEvent) {
-  e.preventDefault();
-  document.getElementById("book")?.scrollIntoView({ behavior: "smooth" });
-}
-
-/** Pill CTA. Always routes to the inline booking calendar. */
+/** Pill CTA. Phones: opens the booking form fullscreen. Desktop: scrolls to the inline form. */
 function BookButton({
   children,
   variant = "primary",
@@ -180,8 +208,32 @@ function BookButton({
   onDark?: boolean;
   className?: string;
 }) {
+  const [opening, setOpening] = useState(false);
+  const timerRef = useRef<number | null>(null);
+  useEffect(() => () => {
+    if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+  }, []);
+
+  const settle = () => {
+    if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+    timerRef.current = null;
+    setOpening(false);
+  };
+
+  const onClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!window.matchMedia(MOBILE_QUERY).matches) {
+      document.getElementById("book")?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    if (opening) return;
+    setOpening(true);
+    timerRef.current = window.setTimeout(settle, OPENING_TIMEOUT_MS);
+    openBookingPopup(settle);
+  };
+
   const base =
-    "inline-flex cursor-pointer items-center justify-center rounded-full text-center font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-coral focus-visible:ring-offset-2";
+    "inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-full text-center font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-coral focus-visible:ring-offset-2 aria-busy:cursor-progress";
   const sizes = { sm: "min-h-11 px-5 py-2 text-sm", lg: "min-h-[52px] px-7 py-3 text-[15px]" };
   const variants = {
     primary: "bg-coral text-white hover:bg-coral-press",
@@ -192,10 +244,18 @@ function BookButton({
   return (
     <a
       href="#book"
-      onClick={scrollToBook}
+      onClick={onClick}
+      aria-busy={opening || undefined}
       className={`${base} ${sizes[size]} ${variants[variant]} ${className}`}
     >
-      {children}
+      {opening ? (
+        <>
+          <span aria-hidden className="size-4 animate-spin rounded-full border-2 border-current border-r-transparent" />
+          Opening the form…
+        </>
+      ) : (
+        children
+      )}
     </a>
   );
 }
@@ -381,6 +441,51 @@ function LogoStrip() {
   );
 }
 
+/* Desktop: the form inline, auto-resized to each question. Phones: a button that
+   opens it fullscreen (see TYPEFORM_FORM_ID). The widget is only created on
+   desktop-width screens, so phones never load a hidden frame or log a view. */
+function BookingForm() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const mobile = window.matchMedia(MOBILE_QUERY);
+    // Phones open the form as a popup, so preload it (see typeform-warmup.ts).
+    if (mobile.matches) armTypeformWarmup(TYPEFORM_FORM_ID);
+    let widget: { unmount: () => void } | null = null;
+    const sync = () => {
+      if (mobile.matches) {
+        widget?.unmount();
+        widget = null;
+      } else if (!widget && containerRef.current) {
+        widget = createWidget(TYPEFORM_FORM_ID, {
+          container: containerRef.current,
+          autoResize: true,
+          disableScroll: true,
+          transitiveSearchParams: true,
+          opacity: 100,
+          iframeProps: TYPEFORM_IFRAME_PROPS,
+        });
+      }
+    };
+    sync();
+    mobile.addEventListener("change", sync);
+    return () => {
+      mobile.removeEventListener("change", sync);
+      widget?.unmount();
+    };
+  }, []);
+
+  return (
+    <>
+      <div className="mx-auto overflow-hidden rounded-card border border-border bg-white shadow-card max-sm:hidden">
+        <div ref={containerRef} style={{ width: "100%", height: "500px" }} />
+      </div>
+      <div className="sm:hidden">
+        <BookButton className="w-full">Start your booking</BookButton>
+      </div>
+    </>
+  );
+}
+
 /* Mobile-only sticky CTA: appears once the hero's CTA has scrolled away and
    hides again when the booking form (#book) comes into view. */
 function MobileStickyCta() {
@@ -429,10 +534,14 @@ function MobileStickyCta() {
 /* ── Page ─────────────────────────────────────────────────────────────────── */
 
 export default function Home() {
+  // DNS + TLS for the form's origins, emitted into <head> by the server, so the
+  // popup/widget doesn't start cold. Fonts are fetched in CORS mode.
+  preconnect("https://form.typeform.com");
+  preconnect("https://renderer-assets.typeform.com");
+  preconnect("https://font.typeform.com", { crossOrigin: "anonymous" });
+
   return (
     <>
-      {/* Typeform embed SDK - scans the page for data-tf-widget and renders the form */}
-      <Script src="https://embed.typeform.com/next/embed.js" strategy="afterInteractive" />
 
       {/* 1. Hero */}
       <section id="top" className="relative overflow-hidden bg-navy-deep px-6 pb-20 pt-12 text-center md:px-12 md:pb-24 md:pt-14">
@@ -697,7 +806,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 11. Booking - "Book A Call" Typeform (inline live embed) */}
+      {/* 11. Booking - "Book A Call" Typeform (inline on desktop, popup button on phones) */}
       <section id="book" className="scroll-mt-8 bg-paper px-6 py-24 md:px-12 max-sm:py-16">
         <div className="mx-auto max-w-[1000px]">
           <h2 className="mb-3 text-center text-[clamp(26px,4vw,38px)] font-bold leading-[1.12] tracking-heading text-navy">
@@ -706,19 +815,7 @@ export default function Home() {
           <p className="mx-auto mb-10 max-w-[620px] text-center text-[16px] leading-[1.7] text-ink-soft">
             Answer a few quick questions to book your call.
           </p>
-          <div className="mx-auto overflow-hidden rounded-card border border-border bg-white shadow-card">
-            <div
-              data-tf-widget={TYPEFORM_FORM_ID}
-              data-tf-opacity="100"
-              data-tf-iframe-props="title=Book A Call"
-              data-tf-transitive-search-params=""
-              data-tf-medium="snippet"
-              data-tf-auto-resize=""
-              data-tf-disable-scroll=""
-              data-tf-inline-on-mobile=""
-              style={{ width: "100%", height: "500px" }}
-            />
-          </div>
+          <BookingForm />
         </div>
       </section>
 

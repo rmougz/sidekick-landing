@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "@typeform/embed/build/css/popup.css";
+@import "@typeform/embed/build/css/widget.css";
 
 /*
  * Sidekick design tokens.
