@@ -2,11 +2,15 @@
 
 import Image from "next/image";
 import Script from "next/script";
+import { useEffect, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 
-// Dedicated Agency Foundations Review booking event, embedded inline below.
-const BOOKING_URL =
-  "https://calendly.com/sidekick-accounting/agency-foundations-review?hide_event_type_details=1&hide_gdpr_banner=1";
+// "Book A Call" Typeform, embedded inline below as a standard widget (mirrors the
+// settings of live embed 01M45MZAE7SZ2S05J6Z2SMTSX6, plus the options a live embed
+// can't take): auto-resize so the frame fits each question instead of scrolling
+// internally, disable-scroll so wheel/swipe scrolls the page rather than jumping
+// questions, and inline-on-mobile so phones don't get a tap-to-open fullscreen modal.
+const TYPEFORM_FORM_ID = "NdUCXFPA";
 
 // Featured client wins - traditional testimonial quotes (verbatim from
 // sidekickaccounting.co.uk/client-wins + the VSL script). First item is featured.
@@ -77,18 +81,23 @@ const testimonials = [
   },
 ];
 
+// `aspect` is each PNG's width/height, used on mobile to size logos by equal
+// visual area rather than equal height (the marks run from 1.35:1 to 4.5:1).
 const logos = [
-  { src: "/logos/1.png", alt: "Literal Humans" },
-  { src: "/logos/2.png", alt: "Kurve" },
-  { src: "/logos/3.png", alt: "be Broadcast" },
-  { src: "/logos/4.png", alt: "Creative Content Agency" },
-  { src: "/logos/5.png", alt: "Breakout Media" },
-  { src: "/logos/6.png", alt: "Influence Engine" },
-  { src: "/logos/7.png", alt: "Kurogo" },
-  { src: "/logos/8.png", alt: "Client Logo" },
-  { src: "/logos/9.png", alt: "Lock & Quay Collective" },
-  { src: "/logos/10.png", alt: "AuthorityAgency" },
+  { src: "/logos/1.png", alt: "Literal Humans", aspect: 1.95 },
+  { src: "/logos/2.png", alt: "Kurve", aspect: 3.67 },
+  { src: "/logos/3.png", alt: "be Broadcast", aspect: 1.48 },
+  { src: "/logos/4.png", alt: "Creative Content Agency", aspect: 1.71 },
+  { src: "/logos/5.png", alt: "Breakout Media", aspect: 2.8 },
+  { src: "/logos/6.png", alt: "Influence Engine", aspect: 1.82 },
+  { src: "/logos/7.png", alt: "Kurogo", aspect: 4.51 },
+  { src: "/logos/8.png", alt: "Client Logo", aspect: 1.35 },
+  { src: "/logos/9.png", alt: "Lock & Quay Collective", aspect: 3.4 },
+  { src: "/logos/10.png", alt: "AuthorityAgency", aspect: 4.42 },
 ];
+
+// Mobile logo area in px² (a 1.5:1 mark lands at ~40px tall, a 4.5:1 at ~23px).
+const MOBILE_LOGO_AREA = 2400;
 
 // The three things the Agency Foundations Review measures against (from the VSL).
 const pillars = [
@@ -348,21 +357,71 @@ function TestimonialCard({
   );
 }
 
-/* Reusable client-logo strip. */
+/* Reusable client-logo strip. Desktop: one wrapping row at equal height.
+   Mobile: an even 2-col grid (5 x 2), each logo sized to equal visual area. */
 function LogoStrip() {
   return (
-    <div className="mx-auto flex max-w-[1000px] flex-wrap items-center justify-center gap-x-10 gap-y-6 max-sm:gap-x-8">
+    <div className="mx-auto flex max-w-[1000px] flex-wrap items-center justify-center gap-x-10 gap-y-6 max-sm:grid max-sm:max-w-[340px] max-sm:grid-cols-2 max-sm:gap-x-6 max-sm:gap-y-7">
       {logos.map((logo) => (
-        <Image
-          key={logo.alt}
-          src={logo.src}
-          alt={logo.alt}
-          width={140}
-          height={40}
-          className="h-9 w-auto object-contain opacity-50 mix-blend-multiply max-sm:h-5"
-          style={{ filter: "brightness(0) saturate(100%) invert(14%) sepia(30%) saturate(1000%) hue-rotate(175deg) brightness(95%)" }}
-        />
+        <div key={logo.alt} className="contents max-sm:flex max-sm:h-11 max-sm:items-center max-sm:justify-center">
+          <Image
+            src={logo.src}
+            alt={logo.alt}
+            width={140}
+            height={40}
+            className="h-9 w-auto object-contain opacity-50 mix-blend-multiply max-sm:h-[var(--logo-h)] max-sm:opacity-70"
+            style={{
+              "--logo-h": `${Math.round(Math.sqrt(MOBILE_LOGO_AREA / logo.aspect))}px`,
+              filter: "brightness(0) saturate(100%) invert(14%) sepia(30%) saturate(1000%) hue-rotate(175deg) brightness(95%)",
+            } as CSSProperties}
+          />
+        </div>
       ))}
+    </div>
+  );
+}
+
+/* Mobile-only sticky CTA: appears once the hero's CTA has scrolled away and
+   hides again when the booking form (#book) comes into view. */
+function MobileStickyCta() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const hero = document.getElementById("top");
+      const book = document.getElementById("book");
+      if (!hero || !book) return;
+      const pastHero = hero.getBoundingClientRect().bottom < 0;
+      const atBook = book.getBoundingClientRect().top < window.innerHeight;
+      setVisible(pastHero && !atBook);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  return (
+    <div
+      inert={!visible}
+      className={`fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-navy-deep/95 px-4 pt-3 backdrop-blur transition-transform duration-300 sm:hidden ${
+        visible ? "translate-y-0" : "translate-y-full"
+      }`}
+      style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
+    >
+      {/* Full label wraps to two lines below ~380px, so small phones get the short one. */}
+      <BookButton className="w-full whitespace-nowrap">
+        <span className="max-[379px]:hidden">Book your Agency Foundations Review</span>
+        <span className="min-[380px]:hidden">Book your review</span>
+      </BookButton>
     </div>
   );
 }
@@ -372,9 +431,8 @@ function LogoStrip() {
 export default function Home() {
   return (
     <>
-      {/* Calendly inline widget assets */}
-      <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
-      <Script src="https://assets.calendly.com/assets/external/widget.js" strategy="lazyOnload" />
+      {/* Typeform embed SDK - scans the page for data-tf-widget and renders the form */}
+      <Script src="https://embed.typeform.com/next/embed.js" strategy="afterInteractive" />
 
       {/* 1. Hero */}
       <section id="top" className="relative overflow-hidden bg-navy-deep px-6 pb-20 pt-12 text-center md:px-12 md:pb-24 md:pt-14">
@@ -639,20 +697,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 11. Booking - dedicated Agency Foundations Review calendar (inline Calendly) */}
+      {/* 11. Booking - "Book A Call" Typeform (inline live embed) */}
       <section id="book" className="scroll-mt-8 bg-paper px-6 py-24 md:px-12 max-sm:py-16">
         <div className="mx-auto max-w-[1000px]">
           <h2 className="mb-3 text-center text-[clamp(26px,4vw,38px)] font-bold leading-[1.12] tracking-heading text-navy">
             Book your Agency Foundations Review
           </h2>
           <p className="mx-auto mb-10 max-w-[620px] text-center text-[16px] leading-[1.7] text-ink-soft">
-            Pick a time that works for you.
+            Answer a few quick questions to book your call.
           </p>
-          <div
-            className="calendly-inline-widget mx-auto overflow-hidden rounded-card border border-border bg-white shadow-card"
-            data-url={BOOKING_URL}
-            style={{ minWidth: "0", width: "100%", height: "700px" }}
-          />
+          <div className="mx-auto overflow-hidden rounded-card border border-border bg-white shadow-card">
+            <div
+              data-tf-widget={TYPEFORM_FORM_ID}
+              data-tf-opacity="100"
+              data-tf-iframe-props="title=Book A Call"
+              data-tf-transitive-search-params=""
+              data-tf-medium="snippet"
+              data-tf-auto-resize=""
+              data-tf-disable-scroll=""
+              data-tf-inline-on-mobile=""
+              style={{ width: "100%", height: "500px" }}
+            />
+          </div>
         </div>
       </section>
 
@@ -683,6 +749,8 @@ export default function Home() {
           </p>
         </div>
       </footer>
+
+      <MobileStickyCta />
     </>
   );
 }
