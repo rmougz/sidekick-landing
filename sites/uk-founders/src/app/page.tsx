@@ -8,6 +8,7 @@ import logo from "@/assets/sidekick-logo-navy-480.png";
 import oliver from "@/assets/clients/OLIVER.png";
 import oren from "@/assets/clients/Oren.jpeg";
 import phaibion from "@/assets/clients/Phaibion.jpg";
+import lewis from "@/assets/clients/Lewis.jpg";
 import logoGuidedGrowth from "@/assets/logos/guided-growth.png";
 import logoKurve from "@/assets/logos/kurve.png";
 import logoBeBroadcast from "@/assets/logos/be-broadcast.png";
@@ -127,9 +128,11 @@ const testimonials: { quote: string; name: string; role: string; photo?: StaticI
     photo: phaibion,
   },
   {
-    quote: "I cannot recommend Sidekick enough. They have helped me understand my numbers and save taxes.",
-    name: "Anonymous",
-    role: "CEO",
+    quote:
+      "The support received has been invaluable for the business. Sidekick has helped us build a robust financial plan which has unlocked new revenue sources.",
+    name: "Lewis Baxter",
+    role: "COO, Kurogo",
+    photo: lewis,
   },
 ];
 
