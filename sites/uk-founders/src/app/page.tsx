@@ -8,27 +8,23 @@ import logo from "@/assets/sidekick-logo-navy-480.png";
 import oliver from "@/assets/clients/OLIVER.png";
 import oren from "@/assets/clients/Oren.jpeg";
 import phaibion from "@/assets/clients/Phaibion.jpg";
-import samSaifi from "@/assets/clients/sam-saif.webp";
-import usman from "@/assets/clients/USMAN.webp";
-import andreas from "@/assets/clients/ANDREAS.png";
-import logo2 from "@/assets/logos/2.png";
-import logo3 from "@/assets/logos/3.png";
-import logo4 from "@/assets/logos/4.png";
-import logoMadx from "@/assets/logos/madx.svg";
-import logo7 from "@/assets/logos/7.png";
-import logo8 from "@/assets/logos/8.png";
-import logo9 from "@/assets/logos/9.png";
-import logo10 from "@/assets/logos/10.png";
 import logoGuidedGrowth from "@/assets/logos/guided-growth.png";
+import logoKurve from "@/assets/logos/kurve.png";
+import logoBeBroadcast from "@/assets/logos/be-broadcast.png";
+import logoCca from "@/assets/logos/creative-content-agency.png";
 import logoPlutus from "@/assets/logos/plutus-media.png";
+import logoMadx from "@/assets/logos/madx.png";
+import logoKurogo from "@/assets/logos/kurogo.png";
+import logoClient8 from "@/assets/logos/client-8.png";
+import logoLockQuay from "@/assets/logos/lock-and-quay.png";
+import logoAuthority from "@/assets/logos/authority-agency.png";
 
 // Client images are static imports, so their URLs carry the /founders basePath
 // in dev and prod alike. The files are resized copies of shared-assets/.
 
-/* ── Content still to come ─────────────────────────────────────────────────── */
+/* ── Company details ───────────────────────────────────────────────────────── */
 
-// Registered office for the footer. Left out of the page until it is set.
-const REGISTERED_ADDRESS: string | null = null;
+const REGISTERED_ADDRESS = "167-169 Great Portland Street, London, W1W 5PF";
 const COMPANY_NUMBER = "12250170";
 
 // Lives on the profit audit zone at the domain root, and covers this page.
@@ -108,15 +104,9 @@ const services: { title: string; body: string; icon: ReactNode }[] = [
   },
 ];
 
-// Verbatim from the Foundations page. No photo means an initial avatar.
+// Verbatim from the Foundations page. No photo means an initial avatar. Oliver
+// is left out here because his quote is the hero card.
 const testimonials: { quote: string; name: string; role: string; photo?: StaticImageData }[] = [
-  {
-    quote:
-      "We've always got the information we need to make decisions quickly. We've saved £10k in taxes since working with Sidekick. They're not your usual accountant.",
-    name: "Oliver L",
-    role: "CEO, Authority Agency",
-    photo: oliver,
-  },
   {
     quote:
       "Sidekick is brilliant. Highly responsive and up for tackling complex challenges. I feel confident in our numbers with their expertise at hand.",
@@ -137,47 +127,36 @@ const testimonials: { quote: string; name: string; role: string; photo?: StaticI
     photo: phaibion,
   },
   {
-    quote: "Thoroughly enjoy working with Sidekick. They've been a game-changer for my business.",
-    name: "Sam Saifi",
-    role: "Founder, Revenue Labz",
-    photo: samSaifi,
-  },
-  {
     quote: "I cannot recommend Sidekick enough. They have helped me understand my numbers and save taxes.",
     name: "Anonymous",
     role: "CEO",
   },
 ];
 
-const results = [
-  {
-    stat: "+$200K monthly revenue at a 77.25% net margin, around $154K a month in extra cash in the bank.",
-    name: "Usman",
-    company: "Guided Growth",
-    photo: usman,
-  },
-  {
-    stat: "£250K+ of new bottom-line profit this year, with +21% revenue and +12% margin growth.",
-    name: "Andreas",
-    company: "Be Creative",
-    photo: andreas,
-  },
+// Each file is the original mark (shared-assets/logos, or as supplied by the
+// client) trimmed to its content and recoloured to one ink colour, so every
+// mark shares the same tone. `ink` is the
+// share of each mark's box that is ink, used to nudge thin marks up slightly.
+const logos: { src: StaticImageData; alt: string; ink: number }[] = [
+  { src: logoGuidedGrowth, alt: "Guided Growth", ink: 0.23 },
+  { src: logoKurve, alt: "Kurve", ink: 0.53 },
+  { src: logoBeBroadcast, alt: "be Broadcast", ink: 0.37 },
+  { src: logoCca, alt: "Creative Content Agency", ink: 0.4 },
+  { src: logoPlutus, alt: "Plutus Media", ink: 0.3 },
+  { src: logoMadx, alt: "MADX", ink: 0.64 },
+  { src: logoKurogo, alt: "Kurogo", ink: 0.6 },
+  { src: logoClient8, alt: "Client logo", ink: 0.46 },
+  { src: logoLockQuay, alt: "Lock & Quay Collective", ink: 0.19 },
+  { src: logoAuthority, alt: "Authority Agency", ink: 0.26 },
 ];
 
-// `scale` sizes stacked marks (symbol above name) up so they read at the same
-// visual weight as the one-line wordmarks.
-const logos: { src: StaticImageData; alt: string; scale?: number }[] = [
-  { src: logoGuidedGrowth, alt: "Guided Growth", scale: 1.5 },
-  { src: logo2, alt: "Kurve" },
-  { src: logo3, alt: "be Broadcast" },
-  { src: logo4, alt: "Creative Content Agency" },
-  { src: logoPlutus, alt: "Plutus Media", scale: 1.6 },
-  { src: logoMadx, alt: "MADX", scale: 0.8 },
-  { src: logo7, alt: "Kurogo" },
-  { src: logo8, alt: "Client logo" },
-  { src: logo9, alt: "Lock & Quay Collective" },
-  { src: logo10, alt: "Authority Agency" },
-];
+/** Height factor that gives logos of different shapes a similar visual weight:
+ *  partial equal-area sizing (exponent 0.4 rather than 0.5, so very wide marks
+ *  don't shrink too far), plus a small boost for thin, light marks. */
+function logoSize({ src, ink }: { src: StaticImageData; ink: number }) {
+  const aspect = src.width / src.height;
+  return Number((aspect ** -0.4 * (0.45 / ink) ** 0.2).toFixed(3));
+}
 
 const steps = [
   "You tell us where the business is and what you're trying to do.",
@@ -268,7 +247,7 @@ function Stars() {
   );
 }
 
-/** Client logos in greyscale. Desktop (1024px+): one row. Phones and tablets: a
+/** Client logos in one grey tone. Desktop (1024px+): one row. Phones and tablets: a
  *  slow, endless sideways scroll (a swipeable static row when reduced motion is on). */
 function LogoStrip() {
   const row = (hidden: boolean) =>
@@ -280,8 +259,8 @@ function LogoStrip() {
           height={32}
           sizes="200px"
           loading="eager"
-          className="h-[calc(28px*var(--s))] w-auto object-contain opacity-60 grayscale mix-blend-multiply lg:h-[calc(24px*var(--s))] xl:h-[calc(28px*var(--s))]"
-          style={{ "--s": l.scale ?? 1 } as CSSProperties}
+          className="h-[calc(40px*var(--f))] w-auto opacity-60 lg:h-[calc(35px*var(--f))] xl:h-[calc(39px*var(--f))]"
+          style={{ "--f": logoSize(l) } as CSSProperties}
         />
       </li>
     ));
@@ -437,34 +416,11 @@ export default function Page() {
           </Container>
         </section>
 
-        {/* 4b. Results */}
-        <section className="pt-20 md:pt-28">
-          <Container>
-            <SectionHeading>The bigger results follow</SectionHeading>
-            <ul className="mt-12 grid gap-4 md:grid-cols-2">
-              {results.map((r) => (
-                <li
-                  key={r.name}
-                  className="flex flex-col gap-5 rounded-[20px] border border-hairline bg-white p-6 sm:flex-row sm:items-start md:p-8"
-                >
-                  <Avatar name={r.name} photo={r.photo} size={64} />
-                  <div>
-                    <p className="text-[18px] font-semibold leading-[1.45] text-navy md:text-[19px]">{r.stat}</p>
-                    <p className="mt-3 text-[14px] text-ink-soft">
-                      <span className="font-bold text-navy">{r.name}</span>, {r.company}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Container>
-        </section>
-
         {/* 5. What clients say */}
         <section className="py-20 md:py-28">
           <Container>
             <SectionHeading>What clients say</SectionHeading>
-            <ul className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-12 grid gap-4 md:grid-cols-2">
               {testimonials.map((t) => (
                 <li key={t.name} className="rounded-[20px] border border-hairline bg-white p-6 md:p-7">
                   <figure className="flex h-full flex-col">
@@ -482,9 +438,6 @@ export default function Page() {
                 </li>
               ))}
             </ul>
-
-            {/* Trustpilot widget goes here once the review count is live. */}
-            <div id="trustpilot" className="empty:hidden" />
           </Container>
         </section>
 
@@ -508,7 +461,7 @@ export default function Page() {
         <Container className="space-y-3 text-[13px] leading-[1.7] text-ink-soft">
           <p>
             Sidekick Accounting Ltd is a firm of Chartered Accountants regulated by the ICAEW.
-            Company number {COMPANY_NUMBER}.{REGISTERED_ADDRESS ? ` Registered office: ${REGISTERED_ADDRESS}.` : ""}
+            Company number {COMPANY_NUMBER}. Registered office: {REGISTERED_ADDRESS}.
           </p>
           <p>
             This website and its content are for informational purposes only and do not constitute
