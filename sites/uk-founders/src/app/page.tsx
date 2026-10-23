@@ -1,24 +1,31 @@
-import Image from "next/image";
-import type { ReactNode } from "react";
+import Image, { type StaticImageData } from "next/image";
+import type { CSSProperties, ReactNode } from "react";
 import { preconnect } from "react-dom";
 import { BookButton } from "@/components/BookButton";
 import { BookingPreload } from "@/components/BookingPreload";
 import { StickyCta } from "@/components/StickyCta";
 import logo from "@/assets/sidekick-logo-navy-480.png";
+import oliver from "@/assets/clients/OLIVER.png";
+import oren from "@/assets/clients/Oren.jpeg";
+import phaibion from "@/assets/clients/Phaibion.jpg";
+import samSaifi from "@/assets/clients/sam-saif.webp";
+import usman from "@/assets/clients/USMAN.webp";
+import andreas from "@/assets/clients/ANDREAS.png";
+import logo2 from "@/assets/logos/2.png";
+import logo3 from "@/assets/logos/3.png";
+import logo4 from "@/assets/logos/4.png";
+import logoMadx from "@/assets/logos/madx.svg";
+import logo7 from "@/assets/logos/7.png";
+import logo8 from "@/assets/logos/8.png";
+import logo9 from "@/assets/logos/9.png";
+import logo10 from "@/assets/logos/10.png";
+import logoGuidedGrowth from "@/assets/logos/guided-growth.png";
+import logoPlutus from "@/assets/logos/plutus-media.png";
 
-/* ── Content still to come (marked [PLACEHOLDER] in the brief) ─────────────── */
+// Client images are static imports, so their URLs carry the /founders basePath
+// in dev and prod alike. The files are resized copies of shared-assets/.
 
-// Hero photo of the Sidekick team. Drop the file in public/ and set the path
-// and its pixel size here; until then the hero shows an empty frame.
-const HERO_PHOTO: { src: string; width: number; height: number; alt: string } | null = null;
-
-// Three short quotes from the "Proof Bank - client words 2020-2026" doc.
-// `placeholder: true` renders the card in a muted "to come" style.
-const QUOTES: { quote: string; name: string; business: string; placeholder?: boolean }[] = [
-  { quote: "Client quote to come.", name: "First name", business: "business type", placeholder: true },
-  { quote: "Client quote to come.", name: "First name", business: "business type", placeholder: true },
-  { quote: "Client quote to come.", name: "First name", business: "business type", placeholder: true },
-];
+/* ── Content still to come ─────────────────────────────────────────────────── */
 
 // Registered office for the footer. Left out of the page until it is set.
 const REGISTERED_ADDRESS: string | null = null;
@@ -31,7 +38,7 @@ const PRIVACY_URL = "/privacy";
 
 const credibility = [
   "ICAEW Chartered Accountants",
-  "Founded by an ex-EY Chartered Accountant",
+  "100+ clients helped",
   "Working with UK founders since 2020",
 ];
 
@@ -87,6 +94,89 @@ const services: { title: string; body: string; icon: ReactNode }[] = [
       </>
     ),
   },
+  {
+    title: "Bookkeeping and monthly reporting",
+    body: "Xero or QuickBooks kept up to date, with a clear monthly view of profit, cash and what to set aside for tax.",
+    icon: (
+      <>
+        <path d="M4 20h16" />
+        <rect x="5.5" y="11" width="3" height="6" rx="0.5" />
+        <rect x="10.5" y="7" width="3" height="10" rx="0.5" />
+        <rect x="15.5" y="4" width="3" height="13" rx="0.5" />
+      </>
+    ),
+  },
+];
+
+// Verbatim from the Foundations page. No photo means an initial avatar.
+const testimonials: { quote: string; name: string; role: string; photo?: StaticImageData }[] = [
+  {
+    quote:
+      "We've always got the information we need to make decisions quickly. We've saved £10k in taxes since working with Sidekick. They're not your usual accountant.",
+    name: "Oliver L",
+    role: "CEO, Authority Agency",
+    photo: oliver,
+  },
+  {
+    quote:
+      "Sidekick is brilliant. Highly responsive and up for tackling complex challenges. I feel confident in our numbers with their expertise at hand.",
+    name: "Oren G",
+    role: "Managing Director, Kurve",
+    photo: oren,
+  },
+  {
+    quote: "They take the stress out of taxes, and deal with it all in a professional and timely manner.",
+    name: "Lauren H",
+    role: "Founder, LBHPT",
+  },
+  {
+    quote:
+      "Everybody wants clarity. My stress levels have decreased and I'm able to operate at a higher level, the biz is performing much better as a result.",
+    name: "Phaibion R",
+    role: "CEO, Royal Energy",
+    photo: phaibion,
+  },
+  {
+    quote: "Thoroughly enjoy working with Sidekick. They've been a game-changer for my business.",
+    name: "Sam Saifi",
+    role: "Founder, Revenue Labz",
+    photo: samSaifi,
+  },
+  {
+    quote: "I cannot recommend Sidekick enough. They have helped me understand my numbers and save taxes.",
+    name: "Anonymous",
+    role: "CEO",
+  },
+];
+
+const results = [
+  {
+    stat: "+$200K monthly revenue at a 77.25% net margin, around $154K a month in extra cash in the bank.",
+    name: "Usman",
+    company: "Guided Growth",
+    photo: usman,
+  },
+  {
+    stat: "£250K+ of new bottom-line profit this year, with +21% revenue and +12% margin growth.",
+    name: "Andreas",
+    company: "Be Creative",
+    photo: andreas,
+  },
+];
+
+// `scale` sizes stacked marks (symbol above name) up so they read at the same
+// visual weight as the one-line wordmarks.
+const logos: { src: StaticImageData; alt: string; scale?: number }[] = [
+  { src: logoGuidedGrowth, alt: "Guided Growth", scale: 1.5 },
+  { src: logo2, alt: "Kurve" },
+  { src: logo3, alt: "be Broadcast" },
+  { src: logo4, alt: "Creative Content Agency" },
+  { src: logoPlutus, alt: "Plutus Media", scale: 1.6 },
+  { src: logoMadx, alt: "MADX", scale: 0.8 },
+  { src: logo7, alt: "Kurogo" },
+  { src: logo8, alt: "Client logo" },
+  { src: logo9, alt: "Lock & Quay Collective" },
+  { src: logo10, alt: "Authority Agency" },
 ];
 
 const steps = [
@@ -97,9 +187,10 @@ const steps = [
 
 /* ── Primitives ────────────────────────────────────────────────────────────── */
 
-/** Coral full stop, echoing the wordmark. */
+/** Coral full stop, echoing the wordmark. Pulled in slightly: at this weight and
+ *  tracking the glyph's side bearing reads as a space before the stop. */
 function Stop() {
-  return <span className="text-coral">.</span>;
+  return <span className="-ml-[0.06em] text-coral">.</span>;
 }
 
 /** Section heading: navy (or white on dark) 800, coral full stop, short coral rule. */
@@ -142,6 +233,68 @@ function LineIcon({ children }: { children: ReactNode }) {
   );
 }
 
+function Avatar({ name, photo, size }: { name: string; photo?: StaticImageData; size: number }) {
+  const box = { width: size, height: size };
+  return photo ? (
+    <Image
+      src={photo}
+      alt=""
+      width={size}
+      height={size}
+      sizes={`${size}px`}
+      className="shrink-0 rounded-full border border-hairline object-cover"
+      style={box}
+    />
+  ) : (
+    <span
+      aria-hidden
+      className="flex shrink-0 items-center justify-center rounded-full bg-navy font-bold text-white"
+      style={{ ...box, fontSize: size * 0.4 }}
+    >
+      {name.charAt(0)}
+    </span>
+  );
+}
+
+function Stars() {
+  return (
+    <div role="img" aria-label="Five stars" className="flex gap-1 text-coral">
+      {Array.from({ length: 5 }, (_, i) => (
+        <svg key={i} aria-hidden viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+          <path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z" />
+        </svg>
+      ))}
+    </div>
+  );
+}
+
+/** Client logos in greyscale. Desktop (1024px+): one row. Phones and tablets: a
+ *  slow, endless sideways scroll (a swipeable static row when reduced motion is on). */
+function LogoStrip() {
+  const row = (hidden: boolean) =>
+    logos.map((l) => (
+      <li key={`${l.alt}${hidden ? "-dup" : ""}`} aria-hidden={hidden || undefined} className={`shrink-0 ${hidden ? "lg:hidden" : ""}`}>
+        <Image
+          src={l.src}
+          alt={hidden ? "" : l.alt}
+          height={32}
+          sizes="200px"
+          loading="eager"
+          className="h-[calc(28px*var(--s))] w-auto object-contain opacity-60 grayscale mix-blend-multiply lg:h-[calc(24px*var(--s))] xl:h-[calc(28px*var(--s))]"
+          style={{ "--s": l.scale ?? 1 } as CSSProperties}
+        />
+      </li>
+    ));
+  return (
+    <div className="logo-marquee overflow-hidden max-lg:[mask-image:linear-gradient(90deg,transparent,black_12%,black_88%,transparent)]">
+      <ul className="logo-track flex w-max items-center gap-10 lg:w-full lg:justify-between lg:gap-6">
+        {row(false)}
+        {row(true)}
+      </ul>
+    </div>
+  );
+}
+
 /* ── Page ──────────────────────────────────────────────────────────────────── */
 
 export default function Page() {
@@ -173,7 +326,7 @@ export default function Page() {
                 ICAEW Chartered Accountants
               </p>
               <h1 className="mt-4 text-[40px] font-extrabold leading-[1.02] tracking-headline text-navy text-balance sm:text-[52px] lg:text-[64px]">
-                Pay less tax, build wealth and plan your exit
+                Pay less tax<span className="-ml-[0.06em]">,</span> build wealth and plan your exit
                 <Stop />
               </h1>
               <p className="mt-6 max-w-[560px] text-[17px] leading-[1.6] text-ink-soft md:text-[18px]">
@@ -189,22 +342,20 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[20px] border border-hairline bg-paper-deep md:aspect-[4/5]">
-              {HERO_PHOTO ? (
-                <Image
-                  src={HERO_PHOTO.src}
-                  alt={HERO_PHOTO.alt}
-                  width={HERO_PHOTO.width}
-                  height={HERO_PHOTO.height}
-                  sizes="(min-width: 768px) 480px, 100vw"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center text-[13px] font-medium text-ink-soft/70">
-                  Team photo to come
-                </div>
-              )}
-            </div>
+            <figure className="rounded-[20px] border border-hairline bg-white p-7 md:p-9">
+              <Stars />
+              <blockquote className="mt-5 text-[22px] font-semibold leading-[1.35] tracking-[-0.015em] text-navy md:text-[26px]">
+                &ldquo;We&rsquo;ve saved £10k in taxes since working with Sidekick. They&rsquo;re not your
+                usual accountant.&rdquo;
+              </blockquote>
+              <figcaption className="mt-7 flex items-center gap-3.5 border-t border-hairline pt-6">
+                <Avatar name="Oliver L" photo={oliver} size={52} />
+                <span>
+                  <span className="block text-[16px] font-bold text-navy">Oliver L</span>
+                  <span className="block text-[14px] text-ink-soft">CEO, Authority Agency</span>
+                </span>
+              </figcaption>
+            </figure>
           </Container>
         </section>
 
@@ -225,6 +376,18 @@ export default function Page() {
           </Container>
         </section>
 
+        {/* 2b. Client logos */}
+        <section aria-labelledby="logos-label" className="pt-12 md:pt-14">
+          <Container>
+            <p id="logos-label" className="text-[12px] font-bold uppercase tracking-eyebrow text-ink-soft">
+              Trusted by UK founders
+            </p>
+          </Container>
+          <div className="mt-6 lg:mx-auto lg:max-w-[1100px] lg:px-8">
+            <LogoStrip />
+          </div>
+        </section>
+
         {/* 3. Where we help */}
         <section className="py-20 md:py-28">
           <Container>
@@ -234,7 +397,7 @@ export default function Page() {
               that set your tax bill are made on purpose.
             </p>
 
-            <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {services.map((s) => (
                 <li key={s.title} className="rounded-[20px] border border-hairline p-6 md:p-7">
                   <LineIcon>{s.icon}</LineIcon>
@@ -274,29 +437,46 @@ export default function Page() {
           </Container>
         </section>
 
+        {/* 4b. Results */}
+        <section className="pt-20 md:pt-28">
+          <Container>
+            <SectionHeading>The bigger results follow</SectionHeading>
+            <ul className="mt-12 grid gap-4 md:grid-cols-2">
+              {results.map((r) => (
+                <li
+                  key={r.name}
+                  className="flex flex-col gap-5 rounded-[20px] border border-hairline bg-white p-6 sm:flex-row sm:items-start md:p-8"
+                >
+                  <Avatar name={r.name} photo={r.photo} size={64} />
+                  <div>
+                    <p className="text-[18px] font-semibold leading-[1.45] text-navy md:text-[19px]">{r.stat}</p>
+                    <p className="mt-3 text-[14px] text-ink-soft">
+                      <span className="font-bold text-navy">{r.name}</span>, {r.company}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
+
         {/* 5. What clients say */}
         <section className="py-20 md:py-28">
           <Container>
             <SectionHeading>What clients say</SectionHeading>
-            <ul className="mt-12 grid gap-4 md:grid-cols-3">
-              {QUOTES.map((q, i) => (
-                <li
-                  key={i}
-                  className={`flex flex-col rounded-[20px] border p-6 md:p-7 ${
-                    q.placeholder ? "border-dashed border-hairline" : "border-hairline"
-                  }`}
-                >
+            <ul className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {testimonials.map((t) => (
+                <li key={t.name} className="rounded-[20px] border border-hairline bg-white p-6 md:p-7">
                   <figure className="flex h-full flex-col">
-                    <blockquote
-                      className={`text-[17px] leading-[1.55] ${
-                        q.placeholder ? "text-ink-soft/70" : "text-ink"
-                      }`}
-                    >
-                      &ldquo;{q.quote}&rdquo;
+                    <blockquote className="flex-1 text-[16px] leading-[1.6] text-ink">
+                      &ldquo;{t.quote}&rdquo;
                     </blockquote>
-                    <figcaption className="mt-6 border-t border-hairline pt-4 text-[14px]">
-                      <span className="font-bold text-navy">{q.name}</span>
-                      <span className="text-ink-soft">, {q.business}</span>
+                    <figcaption className="mt-6 flex items-center gap-3 border-t border-hairline pt-5">
+                      <Avatar name={t.name} photo={t.photo} size={44} />
+                      <span>
+                        <span className="block text-[15px] font-bold text-navy">{t.name}</span>
+                        <span className="block text-[13px] text-ink-soft">{t.role}</span>
+                      </span>
                     </figcaption>
                   </figure>
                 </li>
@@ -330,7 +510,12 @@ export default function Page() {
             Sidekick Accounting Ltd is a firm of Chartered Accountants regulated by the ICAEW.
             Company number {COMPANY_NUMBER}.{REGISTERED_ADDRESS ? ` Registered office: ${REGISTERED_ADDRESS}.` : ""}
           </p>
-          <p>The content on this page is general information and your own position will differ.</p>
+          <p>
+            This website and its content are for informational purposes only and do not constitute
+            regulated financial or legal advice. No guarantees of specific outcomes or results are
+            made. Any reference to potential improvements or results is illustrative only and will
+            vary by business.
+          </p>
           <p>
             <a href={PRIVACY_URL} className="font-semibold text-navy underline underline-offset-4 hover:text-coral">
               Privacy policy
