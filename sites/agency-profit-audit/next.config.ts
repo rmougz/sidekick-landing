@@ -8,6 +8,10 @@ import type { NextConfig } from "next";
 // Ref: node_modules/next/dist/docs/01-app/02-guides/multi-zones.md
 const FOUNDATIONS_ZONE =
   process.env.FOUNDATIONS_ZONE_URL ?? "https://agency-foundations-audit.vercel.app";
+// The UK founders page (sites/uk-founders, basePath "/founders") is a third zone,
+// proxied the same way. Distinct prefix: "/founders" never matches "/foundations".
+const FOUNDERS_ZONE =
+  process.env.FOUNDERS_ZONE_URL ?? "https://sidekick-uk-founders.vercel.app";
 
 const nextConfig: NextConfig = {
   async rewrites() {
@@ -19,6 +23,14 @@ const nextConfig: NextConfig = {
       {
         source: "/foundations/:path*",
         destination: `${FOUNDATIONS_ZONE}/foundations/:path*`,
+      },
+      {
+        source: "/founders",
+        destination: `${FOUNDERS_ZONE}/founders`,
+      },
+      {
+        source: "/founders/:path*",
+        destination: `${FOUNDERS_ZONE}/founders/:path*`,
       },
     ];
   },

@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@import "@typeform/embed/build/css/popup.css";
+
+/*
+ * Sidekick design tokens for the UK founders page (from the page brief).
+ * Coral is a disciplined accent: the full stop on headings, the short rule
+ * under them and button hover. Never a large fill.
+ */
+@theme inline {
+  --color-paper: #fbfaf7;
+  --color-paper-deep: #f3f0e9;
+  --color-ink: #161512;
+  --color-ink-soft: #5a5852;
+  --color-navy: #0e2d48;
+  --color-navy-deep: #0a2238;
+  --color-coral: #fd605b;
+  --color-mint: #99ddcc;
+  --color-hairline: #e6e1d6;
+
+  --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui,
+    sans-serif;
+
+  --tracking-heading: -0.03em;
+  --tracking-headline: -0.04em;
+  --tracking-eyebrow: 0.14em;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* The Typeform popup's own close button, nudged clear of iOS status bars. */
+.tf-v1-popup .tf-v1-close {
+  top: max(12px, env(safe-area-inset-top, 0px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
